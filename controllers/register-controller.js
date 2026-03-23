@@ -9,11 +9,17 @@ const payroll = require('../models/payroll_model.js');
 
 const register_controller = {
     get_register: function(req, res){
-        res.render('register');
+        const isAdmin = req.session.Employee_Type === "Admin";
+        res.render('register', { isAdmin });
     }, 
 
     post_register: async function(req, res){
         const {firstName, lastName, address, contactNumber, email, password, employee_type} = req.body;
+
+        const requesterType = req.session.Employee_Type;
+        if(requesterType === "Manager" && (employee_type === "Admin" || employee_type === "Manager")){
+            return res.status(403).json({message: "Insufficient privileges to create this account type."});
+        }
 
         const user_exists = await employee.findOne({Email: email});
         if(user_exists){

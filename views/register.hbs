@@ -49,9 +49,13 @@
                     <p><span class="label">Email:</span> <span><input type="email" name="email" placeholder="Email" id="email"></span></p> 
                     <p><span class="label">Password:</span> <span><input type="password" name="password" placeholder="Password" id="password"></p>
                     <p><span class="label">Role:</span> <span>
-                        <select name="employeeType" id="employee-type" class="role-dropdown">                        <option>Employee</option>
+                        <select name="employeeType" id="employee-type" class="role-dropdown">
+                            <option>Employee</option>
                             <option>Work From Home</option>
+                            {{#if isAdmin}}
+                            <option>Manager</option>
                             <option>Admin</option>
+                            {{/if}}
                         </select></span></p> 
 
                 <div class="ad-left-btn">

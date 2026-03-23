@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", function(){
                     window.location.href = '/employee_clockpage';
                 }else if (data.type === "Work From Home"){
                     window.location.href = '/work_from_home_clockpage';
+                }else if (data.type === "Manager"){
+                    window.location.href = '/admin_empman_emprecs';
                 }else{
                     window.location.href = '/admin_dashboard';
                 }    

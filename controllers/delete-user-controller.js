@@ -15,7 +15,13 @@ const delete_user_controller = {
     },
 
     get_delete_user: async function(req, res){
-        const emp_emails = await database.findMany(employee, {$or: [{Employee_Type: "Employee"},{Employee_Type: "Work From Home"},{Employee_Type: "Admin"}]});
+        const requesterType = req.session.Employee_Type;
+        // Managers can only see Role B accounts; Administrators see all accounts
+        const query = requesterType === "Manager"
+            ? {$or: [{Employee_Type: "Employee"},{Employee_Type: "Work From Home"}]}
+            : {$or: [{Employee_Type: "Employee"},{Employee_Type: "Work From Home"},{Employee_Type: "Admin"},{Employee_Type: "Manager"}]};
+
+        const emp_emails = await database.findMany(employee, query);
         emp_emails.sort((a, b) => {
             const emailA = (a.Email || '').toLowerCase();
             const emailB = (b.Email || '').toLowerCase();
@@ -32,7 +38,12 @@ const delete_user_controller = {
     },
 
     post_display_info: async function (req,res){
-        const emp_emails = await database.findMany(employee, {$or: [{Employee_Type: "Employee"},{Employee_Type: "Work From Home"},{Employee_Type: "Admin"}]});
+        const requesterType = req.session.Employee_Type;
+        const query = requesterType === "Manager"
+            ? {$or: [{Employee_Type: "Employee"},{Employee_Type: "Work From Home"}]}
+            : {$or: [{Employee_Type: "Employee"},{Employee_Type: "Work From Home"},{Employee_Type: "Admin"},{Employee_Type: "Manager"}]};
+
+        const emp_emails = await database.findMany(employee, query);
         const email = req.body.email;
         emp_emails.sort((a, b) => {
             const emailA = (a.Email || '').toLowerCase();
@@ -53,6 +64,12 @@ const delete_user_controller = {
     post_delete_user: async function (req, res){
         const {email} = req.body;
         const user_exists = await employee.findOne({Email: email});
+
+        // Managers (Role A) cannot delete Admin or Manager accounts
+        if(user_exists && req.session.Employee_Type === "Manager" &&
+           (user_exists.Employee_Type === "Admin" || user_exists.Employee_Type === "Manager")){
+            return res.status(403).json({message: "Insufficient privileges to delete this account."});
+        }
 
         if(user_exists){
             const user_exists_forgot_password = await forgot_password.findOne({Email: email});
