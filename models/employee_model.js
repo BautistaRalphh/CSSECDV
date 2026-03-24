@@ -37,6 +37,10 @@ var employee_schema = new mongoose.Schema({
     IsTimedIn: {
         type: Boolean,
         default: false
+    },
+    Manager_Email: {
+        type: String,
+        default: null
     }
 });
 

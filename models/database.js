@@ -5,7 +5,8 @@ Alternative CRUD operations for documents in the database
 */
 
 const mongoose = require('mongoose');
-const url = 'mongodb+srv://admin:index_zero@payroll.8an3brq.mongodb.net/';
+require('dotenv').config();
+const url = process.env.MONGODB_URI;
 
 const options = {
     useUnifiedTopology: true,

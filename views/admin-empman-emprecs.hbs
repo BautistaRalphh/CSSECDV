@@ -35,16 +35,50 @@
                 </div>
             </div>
             <div class="emp-info">
+                {{#if emp_sum}}
                 <div class="info-container">
-                    <p><span class="label">First Name:</span> <span class="value">{{emp_sum.First_Name}}</span></p>
-                    <p><span class="label">Last Name:</span> <span class="value">{{emp_sum.Last_Name}}</span></p>
-                    <p><span class="label">Address:</span> <span class="value">{{emp_sum.Address}}</span></p> 
-                    <p><span class="label">Contact Number:</span> <span class="value">{{emp_sum.Contact_Number}}</span></p> 
-                    <p><span class="label">Email:</span> <span class="value">{{emp_sum.Email}}</span></p> 
-                    <p><span class="label">Password:</span> <span class="value">{{emp_sum.Password}}</span></p>
-                    <p><span class="label">Role:</span> <span class="value">{{emp_sum.Employee_Type}}</span></p> 
-            </div>
-
+                    <input type="hidden" id="edit-email" value="{{emp_sum.Email}}">
+                    <p><span class="label">First Name:</span> <input type="text" id="edit-firstName" value="{{emp_sum.First_Name}}" {{#unless canEdit}}disabled{{/unless}}></p>
+                    <p><span class="label">Last Name:</span> <input type="text" id="edit-lastName" value="{{emp_sum.Last_Name}}" {{#unless canEdit}}disabled{{/unless}}></p>
+                    <p><span class="label">Address:</span> <input type="text" id="edit-address" value="{{emp_sum.Address}}" {{#unless canEdit}}disabled{{/unless}}></p>
+                    <p><span class="label">Contact Number:</span> <input type="text" id="edit-contactNumber" value="{{emp_sum.Contact_Number}}" {{#unless canEdit}}disabled{{/unless}}></p>
+                    <p><span class="label">Email:</span> <span class="value">{{emp_sum.Email}}</span></p>
+                    <p><span class="label">New Password:</span> <input type="password" id="edit-password" placeholder="Leave blank to keep current" {{#unless canEdit}}disabled{{/unless}}></p>
+                    {{#if isAdmin}}
+                    <p><span class="label">Role:</span>
+                        <select id="edit-employeeType">
+                            <option value="Employee" {{#if (eq emp_sum.Employee_Type "Employee")}}selected{{/if}}>Employee</option>
+                            <option value="Work From Home" {{#if (eq emp_sum.Employee_Type "Work From Home")}}selected{{/if}}>Work From Home</option>
+                            <option value="Manager" {{#if (eq emp_sum.Employee_Type "Manager")}}selected{{/if}}>Manager</option>
+                            <option value="Admin" {{#if (eq emp_sum.Employee_Type "Admin")}}selected{{/if}}>Admin</option>
+                        </select>
+                    </p>
+                    {{else}}
+                    <p><span class="label">Role:</span> <span class="value">{{emp_sum.Employee_Type}}</span></p>
+                    {{/if}}
+                    {{#if canEdit}}
+                    <div class="ad-left-btn" style="margin-top: 10px;">
+                        <button type="button" class="ad-leftdash-btn" onclick="saveEmployeeInfo()"><p>Save Changes</p></button>
+                    </div>
+                    {{/if}}
+                    {{#if canAssignManager}}
+                    <hr style="margin: 16px 0;">
+                    <div>
+                        <p><span class="label">Assigned Manager:</span>
+                            <select id="manager-assign-select">
+                                <option value="">-- Unassigned --</option>
+                                {{#each managers}}
+                                <option value="{{this.Email}}" {{#if (eq this.Email ../emp_sum.Manager_Email)}}selected{{/if}}>{{this.Email}}</option>
+                                {{/each}}
+                            </select>
+                        </p>
+                        <div class="ad-left-btn">
+                            <button type="button" class="ad-leftdash-btn" onclick="assignManager()"><p>Assign Manager</p></button>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+                {{/if}}
             </div>
         </div>
     </div>

@@ -41,11 +41,11 @@ app.use(express.static('public'));
 database.connect();
 
 app.use(session({
-    secret: 'session-secret-key', // Replace with your secret key
+    secret: 'session-secret-key', 
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://Admin_Acc:6rtztqN8cgcS6uwg@payrollcluster.ho2w0w9.mongodb.net/'
+         mongoUrl: process.env.MONGODB_SESSION_URI
     }),
     cookie: { 
         httpOnly: true, 

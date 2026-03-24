@@ -78,7 +78,7 @@ function employee_wfh_access(req, res, next){
     }
 }
 
-// Administrator-only access (Role: Admin) — application logs, notifications, account management
+// Administrator-only access
 function admin_access(req, res, next){
     if(req.session.Employee_Type === "Employee"){
         res.redirect('/employee_clockpage');
@@ -91,7 +91,7 @@ function admin_access(req, res, next){
     }
 }
 
-// Role A (Manager) or Administrator access — employee records, payroll, salary particulars
+// Manager or Administrator access 
 function manager_or_admin_access(req, res, next){
     if(req.session.Employee_Type === "Employee"){
         res.redirect('/employee_clockpage');
@@ -124,14 +124,14 @@ app.post('/employee_time_out', initial_process, employee_wfh_access, employee_cl
 app.post('/retrieve_employee_payroll',initial_process,  employee_wfh_access, employee_dashboard_controllers.get_employee_details);
 // app.get('/salary_particulars', initial_process, employee_wfh_access, employee_salary_particulars_controllers.get_salary_particulars)
 
-//admin-only routes (Administrator privilege — application logs, notifications)
+//admin-only routes 
 app.get('/admin_dashboard', initial_process, admin_access, admin_dash_logs_controllers.get_admin_dash_logs);
 app.get('/retrieve_employee_summary', initial_process, admin_access, admin_dash_logs_controllers.get_employee_summary);
 app.get('/admin_notifs', initial_process, admin_access, admin_notifs_controllers.get_admin_notifs);
 app.get('/display_forgot_password', initial_process, admin_access, admin_notifs_controllers.get_forgot_password);
 app.post('/delete_forgot_password', initial_process, admin_access, forgot_password_controllers.post_delete_forgot_password);
 
-//manager-or-admin routes (Role A + Administrator — employee records, payroll, salary, register, delete)
+//manager-or-admin routes 
 app.get('/register', initial_process, manager_or_admin_access, register_controllers.get_register);
 app.post('/register_employee', initial_process, manager_or_admin_access, register_controllers.post_register);
 app.get('/delete_user', initial_process, manager_or_admin_access, delete_user_controller.get_delete_user_page);
@@ -141,6 +141,8 @@ app.post('/display_delete_info', initial_process, manager_or_admin_access, delet
 app.get('/admin_empman_payroll', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.get_admin_empman_payroll);
 app.get('/admin_empman_emprecs', initial_process, manager_or_admin_access, admin_empman_emprecs_controllers.get_emprecs);
 app.post('/display_specific_employee_records', initial_process, manager_or_admin_access, admin_empman_emprecs_controllers.post_specific_emprecs);
+app.post('/update_employee_info', initial_process, manager_or_admin_access, admin_empman_emprecs_controllers.post_update_employee_info);
+app.post('/assign_manager', initial_process, admin_access, admin_empman_emprecs_controllers.post_assign_manager);
 app.get('/admin_retrieve_employee_total_wp', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.get_emp_total);
 app.get('/admin_retrieve_emp_wpay', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.get_emp_wpay);
 app.post('/admin_update_payroll', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.post_update_payroll);
