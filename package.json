@@ -1,0 +1,46 @@
+{
+  "dependencies": {
+    "axios": "^1.6.8",
+    "body-parser": "^1.20.2",
+    "connect-mongo": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.2",
+    "express-session": "^1.17.3",
+    "hbs": "^4.2.0",
+    "mongodb": "^5.9.2",
+    "mongoose": "^7.4.0",
+    "node-mocks-http": "^1.15.0",
+    "node-schedule": "^2.1.1",
+    "pdfkit": "^0.15.0"
+  },
+  "name": "stsweng",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "cypress": "^13.12.0",
+    "jest": "^29.7.0",
+    "jest-fetch-mock": "^3.0.3"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "jest": {
+    "collectCoverage": true,
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "testMatch": [
+      "**/*.test.js"
+    ],
+    "testPathIgnorePatterns": [
+      "\\\\node_modules\\\\"
+    ]
+  }
+}

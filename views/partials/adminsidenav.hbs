@@ -1,0 +1,37 @@
+<div class="right-payroll right-emp-dash">
+    <div class="admin-rightdash-top">
+        <h1>Admin Dashboard</h1>
+        <p>As of <span id="date">Monday, January 1, 2024</span></p> 
+        <p id="time">00:00:00</p>
+    </div>
+    <div class="sidebar-logout-row">
+        <a href="/logout" class="global-logout-link">Log-Out</a>
+    </div>
+    <div class="ad-dash-spacer"></div>
+    <div class="admin-rightdash-mid">
+        <button type="button" class="ad-rightdash-btn" id="Ti-To-logs-id" onclick="window.location.href = 'admin_dashboard';">
+            <i class="fi fi-rr-calendar-clock"></i>
+            <p>Time-in/out Logs</p>
+        </button>
+        <button type="button" class="ad-rightdash-btn" onclick="window.location.href = 'admin_auth_logs';">
+            <i class="fi fi-rr-shield-check"></i>
+            <p>Access Logs</p>
+        </button>
+        <button type="button" class="ad-rightdash-btn" id="emp-mgm-id" onclick="window.location.href = 'admin_empman_payroll';">
+            <i class="fi fi-rr-employee-man"></i>
+            <p>Employee Management</p>
+        </button>
+        <button type="button" class="ad-rightdash-btn" onclick="window.location.href = 'register';">
+            <i class="fi fi-rr-users-alt"></i>
+            <p>Add/Delete User</p>
+        </button>
+        <button type="button" class="ad-rightdash-btn"  onclick="window.location.href = 'admin_notifs';">
+        <i class="fi fi-rr-bell"></i>
+        <p>Notifications</p>
+        </button>
+        <button type="button" class="ad-rightdash-btn" onclick="window.location.href = 'admin_salary_particulars';">
+            <i class="fi fi-rr-tax"></i>
+            <p>Salary Particulars</p>
+        </button>
+    </div>
+</div>

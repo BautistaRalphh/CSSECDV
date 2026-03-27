@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="css/images/greenatwork-logo.png">
+    <script src="js/script.js"></script>
+</head>
+<body style="background-color: var(--background);">
+<div class="parent-div" style="width: 90%; margin:0">
+    <div class="page-title">
+        <h2>Employee Management</h2>
+    </div>
+    <div class="left-payroll admin-leftdash" style="width: 100%; margin: 0; padding:0; position:absolute; top: 12%;">
+        <div style="margin: 2vh; padding:2vh">
+            <div class="admin-leftdash-top">
+            <div class="empman-midhead" style="align-items: center;">
+                <div class="dropdown sel-week">
+                    <label>Select Week:</label>
+                    <select id="emp-dropdown-week-id" onchange="selectWeek()" focusIndex="-1">
+                        <option>Select Week</option>
+                        <option>Current Week</option>
+                        <option>Last Week</option>
+                        <option>2 Weeks Ago</option>
+                    </select>
+                </div>
+                <div style="width:45%">
+                    <h2>Total Weekly Pay: ₱{{emp_det.Weekly_Total_Pay}}</h2>
+                </div>
+            </div>
+        </div>   
+        <div>
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Time-In</th>
+                    <th>Time-Out</th>
+                    <th>Total Hours Worked</th>
+                    <th>Valid Hours Worked</th>
+                    <th>Valid Minutes Worke</th>
+                    <th>Total Hour Rate</th>
+                    <th>Total Minute Rate</th>
+                    <th>Overtime Hours</th>
+                    <th>Overtime Compensation</th>
+                    <th>Late Arrival Hours</th>
+                    <th>Late Arrival Deductions</th>
+                    <th>Total Day Pay</th>
+                </tr>
+                <tr>
+                    <td>Monday</td>
+                    <td>{{emp_det.Mon_Time_In}}</td>
+                    <td>{{emp_det.Mon_Time_Out}}</td>
+                    <td>{{emp_det.Mon_Hours}}:{{emp_det.Mon_Minutes}}</td>
+                    <td>{{emp_det.Mon_Hours}}</td>
+                    <td>{{emp_det.Mon_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[1]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[1]}}</td>
+                    <td>{{emp_det.Mon_OT_Hours}}</td>
+                    <td>₱ {{emp_det.Mon_OT_Compensation}}</td>
+                    <td>{{emp_det.Mon_Late_Hours}}</td>
+                    <td>₱ {{emp_det.Mon_Late_Deduction}}</td>
+                    <td>₱ {{emp_det.Mon_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Tuesday</td>
+                    <td>{{emp_det.Tue_Time_In}}</td>
+                    <td>{{emp_det.Tue_Time_Out}}</td>
+                    <td>{{emp_det.Tue_Hours}}:{{emp_det.Tue_Minutes}}</td>
+                    <td>{{emp_det.Tue_Hours}}</td>
+                    <td>{{emp_det.Tue_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[2]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[2]}}</td>
+                    <td>{{emp_det.Tue_OT_Hours}}</td>
+                    <td>₱ {{emp_det.Tue_OT_Compensation}}</td>
+                    <td>{{emp_det.Tue_Late_Hours}}</td>
+                    <td>₱ {{emp_det.Tue_Late_Deduction}}</td>
+                    <td>₱ {{emp_det.Tue_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Wednesday</td>
+                    <td>{{emp_det.Wed_Time_In}}</td>
+                    <td>{{emp_det.Wed_Time_Out}}</td>
+                    <td>{{emp_det.Wed_Hours}}:{{emp_det.Wed_Minutes}}</td>
+                    <td>{{emp_det.Wed_Hours}}</td>
+                    <td>{{emp_det.Wed_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[3]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[3]}}</td>
+                    <td>{{emp_det.Wed_OT_Hours}}</td>
+                    <td>₱ {{emp_det.Wed_OT_Compensation}}</td>
+                    <td>{{emp_det.Wed_Late_Hours}}</td>
+                    <td>₱ {{emp_det.Wed_Late_Deduction}}</td>
+                    <td>₱ {{emp_det.Wed_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Thursday</td>
+                    <td>{{emp_det.Thu_Time_In}}</td>
+                    <td>{{emp_det.Thu_Time_Out}}</td>
+                    <td>{{emp_det.Thu_Hours}}:{{emp_det.Thu_Minutes}}</td>
+                    <td>{{emp_det.Thu_Hours}}</td>
+                    <td>{{emp_det.Thu_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[4]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[4]}}</td>
+                    <td>{{emp_det.Thu_OT_Hours}}</td>
+                    <td>₱ {{emp_det.Thu_OT_Compensation}}</td>
+                    <td>{{emp_det.Thu_Late_Hours}}</td>
+                    <td>₱ {{emp_det.Thu_Late_Deduction}}</td>
+                    <td>₱ {{emp_det.Thu_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Friday</td>
+                    <td>{{emp_det.Fri_Time_In}}</td>
+                    <td>{{emp_det.Fri_Time_Out}}</td>
+                    <td>{{emp_det.Fri_Hours}}:{{emp_det.Fri_Minutes}}</td>
+                    <td>{{emp_det.Fri_Hours}}</td>
+                    <td>{{emp_det.Fri_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[5]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[5]}}</td>
+                    <td>{{emp_det.Fri_OT_Hours}}</td>
+                    <td>₱ {{emp_det.Fri_OT_Compensation}}</td>
+                    <td>{{emp_det.Fri_Late_Hours}}</td>
+                    <td>₱ {{emp_det.Fri_Late_Deduction}}</td>
+                    <td>₱ {{emp_det.Fri_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Saturday</td>
+                    <td>{{emp_det.Sat_Time_In}}</td>
+                    <td>{{emp_det.Sat_Time_Out}}</td>
+                    <td>{{emp_det.Sat_Hours}}:{{emp_det.Sat_Minutes}}</td>
+                    <td>{{emp_det.Sat_Hours}}</td>
+                    <td>{{emp_det.Sat_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[6]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[6]}}</td>
+                    <td>{{emp_det.Sat_OT_Hours}}</td>
+                    <td>₱ {{emp_det.Sat_OT_Compensation}}</td>
+                    <td>{{emp_det.Sat_Late_Hours}}</td>
+                    <td>₱ {{emp_det.Sat_Late_Deduction}}</td>
+                    <td>₱ {{emp_det.Sat_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Sunday</td>
+                    <td>{{emp_det.Sun_Time_In}}</td>
+                    <td>{{emp_det.Sun_Time_Out}}</td>
+                    <td>{{emp_det.Sun_Hours}}:{{emp_det.Sun_Minutes}}</td>
+                    <td>{{emp_det.Sun_Hours}}</td>
+                    <td>{{emp_det.Sun_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[0]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[0]}}</td>
+                    <td>{{emp_det.Sun_OT_Hours}}</td>
+                    <td>₱ {{emp_det.Sun_OT_Compensation}}</td>
+                    <td>{{emp_det.Sun_Late_Hours}}</td>
+                    <td>₱ {{emp_det.Sun_Late_Deduction}}</td>
+                    <td>₱ {{emp_det.Sun_Total_Pay}}</td>
+                </tr>
+            </table>
+        </div>
+        
+        </div>
+        <div class="exportBtn">
+            <button>Weekly Payroll Summary</button>
+        </div>
+    </div>
+    <div class="empman-btm wklyAdditional" style="width:90%; padding: 0px 18px 3px 18px;">
+        <div class="num-input-1">
+            <h3>Additional: ₱<span>{{emp_det.Weekly_Total_Additional}}</span></h3>
+            <h3>Advance:  ₱<span>{{emp_det.Weekly_Total_Advance}}</span></h3>      
+            <h3>Deduction: ₱<span>{{emp_det.Weekly_Total_Deduction}}</span></h3>
+        </div>
+
+    </div>
+</div>
+
+{{> empsidenav}}
+<script>
+    function redirect_to_clockpage(){
+        if("{{emp_rec.Employee_Type}}" === "Employee"){
+            window.location.href = "/employee_clockpage";
+        }else{
+            window.location.href = "work_from_home_clockpage";
+        }
+    }
+</script>
+<script src="/js/display-employee-payroll.js"></script>
+</body>
+</html>

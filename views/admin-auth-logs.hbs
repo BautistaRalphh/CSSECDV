@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Access Logs</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/css/images/greenatwork-logo.png">
+    <script src="/js/script.js"></script>
+</head>
+<body>
+<div style="margin:0; display: flex; flex-direction: column; width: 100%; background-color: var(--background);">
+    <div class="admin-leftdash-top">
+        <div class="page-title">
+            <h2>Access Logs</h2>
+        </div>
+    </div>
+    <div class="left-payroll admin-leftdash" style="width: 97%; height:100%; margin: 0; z-index: 1; transform:translateY(-3px)">
+        <div style="display:flex; gap: 16px; align-items: end; flex-wrap: wrap; margin-bottom: 16px;">
+            <div class="dropdown">
+                <p>Date:</p>
+                <input style="background-color: var(--green-l);" type="date" id="get-log-date-id" value="{{selectedDate}}">
+            </div>
+            <div class="dropdown">
+                <p>Action:</p>
+                <select id="get-log-action-id" style="background-color: var(--green-l);">
+                    <option value="ALL" {{#if (eq selectedAction "ALL")}}selected{{/if}}>All</option>
+                    <option value="LOGIN" {{#if (eq selectedAction "LOGIN")}}selected{{/if}}>Login</option>
+                    <option value="LOGOUT" {{#if (eq selectedAction "LOGOUT")}}selected{{/if}}>Logout</option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <th>Email</th>
+                    <th>Employee Type</th>
+                    <th>Action</th>
+                    <th>Timestamp</th>
+                </tr>
+                {{#each logs}}
+                <tr>
+                    <td>{{this.Email}}</td>
+                    <td>{{this.Employee_Type}}</td>
+                    <td>{{this.Action}}</td>
+                    <td>{{this.Logged_At}}</td>
+                </tr>
+                {{/each}}
+            </table>
+        </div>
+    </div>
+</div>
+{{> adminsidenav}}
+<script src="/js/admin-auth-logs.js"></script>
+</body>
+</html>

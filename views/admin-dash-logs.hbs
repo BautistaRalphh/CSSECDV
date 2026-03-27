@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css"> 
+    <link rel="icon" type="image/x-icon" href="/css/images/greenatwork-logo.png">
+    <script src="/js/script.js"></script> 
+</head>
+<body>
+<div style="margin:0; display: flex; flex-direction: column; width: 100%; background-color: var(--background);">
+    <div class="admin-leftdash-top">
+        <div class="page-title">
+            <h2>Time-In/Out Logs</h2>
+        </div>
+    </div>
+    <div class="left-payroll admin-leftdash" style="width: 97%; height:100%; margin: 0; z-index: 1; transform:translateY(-3px)">
+    <div class="dropdown">
+            <p>Date:</p>
+            <input style="background-color: var(--green-l);" type="date" id="get-date-id">
+        </div>   
+    <div>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Time-In</th>
+                <th>Time-Out</th>
+                <th>Total Hours</th>
+            </tr>
+            {{#each emp_sum}}
+            {{#if (eq @root.d_week "Monday")}}
+            <tr>
+                <td>{{this.Email}}</td>
+                <td>{{this.Mon_Time_In}}</td>
+                <td>{{this.Mon_Time_Out}}</td>
+                <td>{{this.Mon_Hours}}</td>
+            </tr>
+            {{/if}}
+            {{#if (eq @root.d_week "Tuesday")}}
+            <tr>
+                <td>{{this.Email}}</td>
+                <td>{{this.Tue_Time_In}}</td>
+                <td>{{this.Tue_Time_Out}}</td>
+                <td>{{this.Tue_Hours}}</td>
+            </tr>
+            {{/if}}
+            {{#if (eq @root.d_week "Wdnesday")}}
+            <tr>
+                <td>{{this.Email}}</td>
+                <td>{{this.Wed_Time_In}}</td>
+                <td>{{this.Wed_Time_Out}}</td>
+                <td>{{this.Wed_Hours}}</td>
+            </tr>
+            {{/if}}
+            {{#if (eq @root.d_week "Thursday")}}
+            <tr>
+                <td>{{this.Email}}</td>
+                <td>{{this.Thu_Time_In}}</td>
+                <td>{{this.Thu_Time_Out}}</td>
+                <td>{{this.Thu_Hours}}</td>
+            </tr>
+            {{/if}}
+            {{#if (eq @root.d_week "Friday")}}
+            <tr>
+                <td>{{this.Email}}</td>
+                <td>{{this.Fri_Time_In}}</td>
+                <td>{{this.Fri_Time_Out}}</td>
+                <td>{{this.Fri_Hours}}</td>
+            </tr>
+            {{/if}}
+            {{#if (eq @root.d_week "Saturday")}}
+            <tr>
+                <td>{{this.Email}}</td>
+                <td>{{this.Sat_Time_In}}</td>
+                <td>{{this.Sat_Time_Out}}</td>
+                <td>{{this.Sat_Hours}}</td>
+            </tr>
+            {{/if}}
+            {{#if (eq @root.d_week "Sunday")}}
+            <tr>
+                <td>{{this.Email}}</td>
+                <td>{{this.Sun_Time_In}}</td>
+                <td>{{this.Sun_Time_Out}}</td>
+                <td>{{this.Sun_Hours}}</td>
+            </tr>
+            {{/if}}
+            {{/each}}
+        </table>
+    </div>
+    </div>
+
+</div>
+{{> adminsidenav}}
+<script src="/js/display-employee-summary.js"></script>
+</body>
+</html>

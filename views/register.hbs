@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css"> 
+     <link rel="icon" type="image/x-icon" href="/css/images/greenatwork-logo.png">
+    <script src="/js/script.js"></script> 
+</head>
+<body style="padding:0;">
+
+    <div class = "popup" id="popup-2">    
+        <div class="overlay">
+            <div class="content">
+                <div class="close-btn" onclick="togglePopup()">&times;</div>
+                <h1>Confirm Register</h1>
+                    <span><p>Do you want to add this user?</p></span>
+                <div class="otp-button"><button id="register-button">Confirm</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class = "popup" id="popup-3">    
+        <div class="overlay">
+            <div class="content">
+                <div class="close-btn" onclick="togglePopup2()">&times;</div>
+                <h1>New User Has Been Added</h1>
+                <div class="otp-button"><button onclick="togglePopup2()">Confirm</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="left-payroll admin-leftdash" style="background-color: var(--white-m); padding:0;">
+        <div class="title-container" style="background-color: var(--background); margin:0;">
+        <div class="page-title title-wrapper" style="transform: translate(10px, 3px)" onclick="addEmp()">
+            <h2>Add Employee</h2>
+        </div>
+        <div class="page-title title-wrapper" onclick="deleteEmp()">
+            <h2>Delete Employee</h2>
+        </div>
+        </div>
+        <div class="container">
+            <div class="emp-info" style="font-weight:bold;">
+                    <!-- Placeholder info -->
+                    <p><span class="label">First Name:</span> <span><input type="text" name="firstName" placeholder="First Name" id="firstName"></span></p>
+                    <p><span class="label">Last Name:</span> <span><input type="text" name="lastName" placeholder="Last Name" id="lastName"></span></p>
+                    <p><span class="label">Address:</span> <span><input type="text" name="address" placeholder="Address" id="address"></span></p> 
+                    <p><span class="label">Contact Number:</span> <span><input type="number" name="contactNumber" placeholder="eg.0967897423" id="contactNumber"></span></p>              
+                    <p><span class="label">Email:</span> <span><input type="email" name="email" placeholder="Email" id="email"></span></p> 
+                    <p><span class="label">Password:</span> <span><input type="password" name="password" placeholder="Password" id="password"></p>
+                    <p><span class="label">Role:</span> <span>
+                        <select name="employeeType" id="employee-type" class="role-dropdown">
+                            <option>Employee</option>
+                            <option>Work From Home</option>
+                            {{#if isAdmin}}
+                            <option>Manager</option>
+                            <option>Admin</option>
+                            {{/if}}
+                        </select></span></p> 
+
+                <div class="ad-left-btn">
+                    <button type="button"  class="ad-leftdash-btn" onclick="togglePopup()">
+                        <p>Confirm Add Employee</p>
+                    </button>
+                </div>        
+            </div>
+        </div>
+        </div>
+    </div>
+
+{{>adminsidenav}}
+<script>
+
+    function addEmp() {
+        window.location.href = 'register';
+    }
+
+    function deleteEmp() {
+        window.location.href = 'delete_user';
+    }
+</script>
+<script src="/js/register.js"></script>
+</body>
+</html>

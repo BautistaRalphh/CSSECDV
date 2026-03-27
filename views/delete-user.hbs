@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="icon" type="image/x-icon" href="css/images/greenatwork-logo.png">
+    <script src="js/script.js"></script> 
+</head>
+<body>
+   <div class = "popup" id="popup-2">    
+        <div class="overlay">
+            <div class="content">
+                <div class="close-btn" onclick="togglePopup()">&times;</div>
+                <h1>Confirm Deletion</h1>
+                    <span><p>Please not that employee records will be PERMANENTLY deleted.</p></span>
+                <div class="otp-button"><button id="user-delete-button" onclick="delete_function(); togglePopup2()">Confrim</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class = "popup" id="popup-3">    
+            <div class="overlay">
+                <div class="content">
+                    <div class="close-btn" onclick="reload()">&times;</div>
+                    <h1>User Has Been Deleted</h1>
+                    <div class="otp-button"><button id="register-button" onclick="reload()">Confrim</button></div>
+                    </form>
+                </div>
+            </div>
+    </div>
+
+<div class="left-payroll admin-leftdash" style="background-color: var(--white-m); padding:0;">
+        <div class="title-container" style="background-color: var(--background); margin:0;">
+            <div class="page-title title-wrapper" onclick="addEmp()">
+                <h2>Add Employee</h2>
+            </div>
+            <div class="page-title title-wrapper" style="transform: translate(-15px, 3px); z-index:0;" onclick="deleteEmp()">
+                <h2>Delete Employee</h2>
+            </div>
+        </div>
+        <div class="container">
+            <div class="empman-header" style="margin-bottom: 2vh;">
+                <div class="dropdown">
+                    <label>Employee:</label>
+                    <select id="email" onchange="displayDetail()">
+                        <option>Select User</option>
+                        {{#each emp_emails}}
+                        <option>{{this.Email}}</option>
+                        {{/each}}
+                    </select>
+                </div> 
+            </div>
+            <div class="emp-info">
+                <div class="info-container">
+                    <p><span class="label">First Name:</span> <span>{{emp_sum.First_Name}}</span></p>
+                    <p><span class="label">Last Name:</span> <span>{{emp_sum.Last_Name}}</span></p>
+                    <p><span class="label">Address:</span> <span>{{emp_sum.Address}}</span></p> 
+                    <p><span class="label">Contact Number:</span> <span>{{emp_sum.Contact_Number}}</span></p> 
+                    <p><span class="label">Email:</span> <span id="emailToDelete">{{emp_sum.Email}}</span></p> 
+                    <p><span class="label">Password:</span> <span>{{emp_sum.Password}}</span></p>
+                    <p><span class="label">Role:</span> <span>{{emp_sum.Employee_Type}}</span></p>
+                </div>
+                <div class="ad-left-btn">
+                    <button type="button" onclick="togglePopup()" class="ad-leftdash-btn">
+                        <p>Confirm Delete Employee</p>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+</div>
+<script>
+    function addEmp() {
+        window.location.href = 'register';
+    }
+
+    function deleteEmp() {
+        window.location.href = 'delete_user';
+    }
+</script>
+{{>adminsidenav}}
+<script src="/js/user-delete.js"></script>
+</body>
+</html>

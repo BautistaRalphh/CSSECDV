@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="icon" type="image/x-icon" href="css/images/greenatwork-logo.png">
+    <script src="js/script.js"></script> 
+</head>
+<body>
+<div class="left-payroll admin-leftdash">
+    <div class="admin-leftdash-top">
+        <h2>Admin Notifications</h2>
+    </div>
+    <div class="log-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each emp_forgot_password}}
+                <tr>
+                    <td>{{this.Name}}</td>
+                    <td>{{this.Email}}</td>
+                    <td>{{this.Time}}</td>
+                    <td>Forgot Password</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <form id="addressed-id">
+        <p>Finished Notification: <span><input type="email" name="email" placeholder="Email" id="email-id"></span></p> 
+        <button type="button" id="addressed-button-id" class="ad-leftdash-btn"><p>Submit</p></button>
+    </form>
+</div>
+{{> adminsidenav}}
+</div>
+<script src="/js/admin-notifs.js"></script>
+</body>
+</html>

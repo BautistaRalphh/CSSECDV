@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css"> 
+    <link rel="icon" type="image/x-icon" href="/css/images/greenatwork-logo.png">
+    <script src="/js/script.js"></script> 
+</head>
+<body style="display: flex; flex-direction: row;">
+<div class="left-payroll admin-leftdash" style="margin:0; display: flex; flex-direction: column; width: 100%; background-color: var(--background);">
+    <div class="admin-leftdash-top">
+        <div class="title-container">
+            <div class="page-title title-wrapper" id="emp-info" style="transform: translate(10px, 3px);" >
+                <h2>Employee Information</h2>
+            </div>
+            <div class="page-title title-wrapper" id="weekly-payroll">
+                <h2>Weekly Payroll</h2>
+            </div>
+        </div>
+        <div class="container" style="z-index: 1;">
+            <div class="empman-header">
+                <div class="dropdown">
+                    <label>Employee:</label>
+                    <select onchange="displayInfo();" id="selectedEmployee">
+                        <option id="current-emp-option">Select Employee</option>
+                    {{#each emp_emails}}
+                        {{!-- <option>{{this.Last_Name}} - {{this.Email}}</option> --}}
+                        <option>{{this.Email}}</option>
+                    {{/each}}
+                    </select>
+                    
+                </div>  
+                <div style="width: 30%;">
+                    <h2 style="color: black;">Time-In Status: <span class="status-on">{{emp_sum.IsTimedIn}}</span></h2>
+                </div>
+            </div>
+            <div class="emp-info">
+                {{#if emp_sum}}
+                <div class="info-container">
+                    <input type="hidden" id="edit-email" value="{{emp_sum.Email}}">
+                    <p><span class="label">First Name:</span> <input type="text" id="edit-firstName" value="{{emp_sum.First_Name}}" {{#unless canEdit}}disabled{{/unless}}></p>
+                    <p><span class="label">Last Name:</span> <input type="text" id="edit-lastName" value="{{emp_sum.Last_Name}}" {{#unless canEdit}}disabled{{/unless}}></p>
+                    <p><span class="label">Address:</span> <input type="text" id="edit-address" value="{{emp_sum.Address}}" {{#unless canEdit}}disabled{{/unless}}></p>
+                    <p><span class="label">Contact Number:</span> <input type="text" id="edit-contactNumber" value="{{emp_sum.Contact_Number}}" {{#unless canEdit}}disabled{{/unless}}></p>
+                    <p><span class="label">Email:</span> <span class="value">{{emp_sum.Email}}</span></p>
+                    <p><span class="label">New Password:</span> <input type="password" id="edit-password" placeholder="Leave blank to keep current" {{#unless canEdit}}disabled{{/unless}}></p>
+                    {{#if isAdmin}}
+                    <p><span class="label">Role:</span>
+                        <select id="edit-employeeType">
+                            <option value="Employee" {{#if (eq emp_sum.Employee_Type "Employee")}}selected{{/if}}>Employee</option>
+                            <option value="Work From Home" {{#if (eq emp_sum.Employee_Type "Work From Home")}}selected{{/if}}>Work From Home</option>
+                            <option value="Manager" {{#if (eq emp_sum.Employee_Type "Manager")}}selected{{/if}}>Manager</option>
+                            <option value="Admin" {{#if (eq emp_sum.Employee_Type "Admin")}}selected{{/if}}>Admin</option>
+                        </select>
+                    </p>
+                    {{else}}
+                    <p><span class="label">Role:</span> <span class="value">{{emp_sum.Employee_Type}}</span></p>
+                    {{/if}}
+                    {{#if canEdit}}
+                    <div class="ad-left-btn" style="margin-top: 10px;">
+                        <button type="button" class="ad-leftdash-btn" onclick="saveEmployeeInfo()"><p>Save Changes</p></button>
+                    </div>
+                    {{/if}}
+                    {{#if canAssignManager}}
+                    <hr style="margin: 16px 0;">
+                    <div>
+                        <p><span class="label">Assigned Manager:</span>
+                            <select id="manager-assign-select">
+                                <option value="">-- Unassigned --</option>
+                                {{#each managers}}
+                                <option value="{{this.Email}}" {{#if (eq this.Email ../emp_sum.Manager_Email)}}selected{{/if}}>{{this.Email}}</option>
+                                {{/each}}
+                            </select>
+                        </p>
+                        <div class="ad-left-btn">
+                            <button type="button" class="ad-leftdash-btn" onclick="assignManager()"><p>Assign Manager</p></button>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    
+</div>
+{{>adminsidenav}}
+<script>
+    document.getElementById('emp-info').addEventListener('click', function() {
+        window.location.href = 'admin_empman_emprecs';
+        console.log('Clicked');
+    });
+
+    document.getElementById('weekly-payroll').addEventListener('click', function() {
+        window.location.href = 'admin_empman_payroll';
+        console.log('Clicked');
+    });
+</script>
+
+<script src="/js/employee-information.js"></script>
+</body>
+</html>

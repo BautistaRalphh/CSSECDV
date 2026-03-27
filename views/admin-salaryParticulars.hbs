@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Employee Salary Particulars</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="css/images/greenatwork-logo.png">
+    <script src="js/script.js"></script>
+</head>
+<body style="background-color: var(--background);">
+    <div class="parent-div" style="width: 90%; margin:0">
+        <div class="page-title">
+            <h2>Salary Particulars</h2>
+        </div>
+        <div class="left-payroll salary-container" style="width: 100%; height: 88%; margin: 0; padding:0; position:absolute; top: 12%;">
+            <div class="salary-par-date">
+                <div class="dropdown">
+                    <label>Employee:</label>
+                    <select id="emp-dropdown-id">
+                        <option id="current-emp-option">Select</option>
+                        {{#each emp_total}}
+                        <option>{{this.Email}}</option>
+                        {{/each}}
+                    </select>
+                </div> 
+            </div>
+            <div class="salary-par-date"> Date: {{emp_pay.Mon_Date}} - {{emp_pay.Sat_Date}} </div>
+            {{!-- change the date into {{emp_pay.Mon_Date}}- {{emp_pay.Sat/sun_Date}} --}}
+            <div class="salary-par-box" id="salary-slip">
+                 <table class="salary-pars-table">
+                    <tr>
+                        <td>&nbsp;</td>
+                        <th>Hours</th> 
+                        <th>Amount</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Basic Pay @   :</td>
+                        <td>{{Total_Basic_Hours}}</td>
+                        <td>{{Total_Basic_Pay}}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Overtime Rate @  /hr:</td>
+                        <td>{{Total_OT_Hours}}</td>
+                        <td>{{Total_OT_Compensation}}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Holiday/s   %:</td>
+                        <td>{{Total_Holiday_Hours}}</td>
+                        <td>{{Total_Holiday_Pay}}</td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left;">Deductions</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">PAGIBIG Contribution:</td>
+                        <td>&nbsp;</td>
+                        <td>{{emp_pay.Deduction_PAGIBIG_Contribution}}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">PHILHEALTH:</td>
+                        <td>&nbsp;</td>
+                        <td>{{emp_pay.Deduction_Philhealth}}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">SSS:</td>
+                        <td>&nbsp;</td>
+                        <td>{{emp_pay.Deduction_SSS}}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Cash-Advance:</td>
+                        <td>&nbsp;</td>
+                        <td>{{emp_pay.Weekly_Total_Advance}}</td>
+                        {{!-- or is it the weekly_total_deduction? --}}
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <th>NET PAY:</td>
+                        <th>₱{{emp_pay.Weekly_Total_Pay}}</td>
+                    </tr>
+                 </table>
+            </div>
+            <div class="printBtn">
+                <button type="button" id="print-button">Print</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="employee-name" style="display: none;">John Doe</div>
+    <div id="employee-email" style="display: none;">john.doe@example.com</div>
+    <div id="employee-type" style="display: none;">Employee</div>
+
+    {{> adminsidenav}}
+
+
+
+    <script src="/js/admin-salary-particulars.js"></script>    
+</body>
+</html>

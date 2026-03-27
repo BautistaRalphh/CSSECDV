@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css"> 
+    <link rel="icon" type="image/x-icon" href="/css/images/greenatwork-logo.png">
+    <script src="/js/script.js"></script>
+    
+</head>
+<body style="display: flex; flex-direction: row;">
+<div class = "popup" id="popup-5">    
+    <div class="overlay">
+        <div class="content">
+            <div class="close-btn" onclick="togglePopup()">&times;</div>
+                <h1 style="color: red;">Week/Employee Not Selected</h1>
+                <span><p>Select a week and an employee first.</p></span>
+            </form>
+        </div>
+    </div>
+</div>
+<div class = "popup" id="popup-6">    
+    <div class="overlay">
+        <div class="content">
+            <div class="close-btn" onclick="togglePopup1()">&times;</div>
+                <h1 style="color: red;">Error</h1>
+                <span><p>Only current week is adjustable.</p></span>
+            </form>
+        </div>
+    </div>
+</div>
+<div style="margin:0; display: flex; flex-direction: column; width: 100%; background-color: var(--background);">
+    <div class="title-container">
+        <div class="page-title title-wrapper" id="emp-info" onclick="navigateToEmpInfo()">
+            <h2>Employee Information</h2>
+        </div>
+        <div class="page-title title-wrapper" id="weekly-payroll" style="transform: translate(-10px, 3px)" onclick="navigateToWeeklyPayroll()">
+            <h2>Weekly Payroll</h2>
+        </div>
+    </div>
+    <div class="left-payroll admin-leftdash" style="width:97%; margin: 0; z-index: 1; transform:translateY(-3px)">
+        <div class="admin-leftdash-top">  
+            <div class="empman-midhead" style="align-items: center;">
+                <div class="dropdown">
+                    <label>Employee:</label>
+                    <select id="emp-dropdown-id">
+                        <option id="current-emp-option">Select</option>
+                        {{#each emp_total}}
+                        <option>{{this.Email}}</option>
+                        {{/each}}
+                    </select>
+                </div>  
+                <div class="dropdown sel-week" id="select-week-dropdown-id">
+                    <label>Select Week:</label>
+                    <select id="emp-dropdown-week-id" focusIndex="-1">
+                        <option id="current-week-option">Select Week</option>
+                        <option>Current Week</option>
+                        <option>Last Week</option>
+                        <option>2 Weeks Ago</option>
+                    </select>
+                </div>
+                <div class="num-input">
+                    <p>Pay Per Hour: ₱{{emp_wpay.Weekly_Hourly_Rate}}</p>
+                    <form id="PPH-form-id">
+                    <input type="number" id="pph-id">  
+                    <input type="hidden" name="payroll-id" value="{{emp_wpay._id}}">
+                    <button type="button" id="payroll-pph-changes-btn">SUBMIT</button>
+                    </form>
+                </div>
+            </div>   
+        </div>
+        <div id="weekly-payroll-container-id">
+            <table id="weekly-payroll-table-id">
+                <tr>
+                    <th></th>
+                    <th>Time-In</th>
+                    <th>Time-Out</th>
+                    <th>Total Time</th>
+                    <th>Total Valid Hours</th>
+                    <th>Total Valid Minutes</th>
+                    <th>Total Hour Rate</th>
+                    <th>Total Minute Rate</th>
+                    <th>Overtime Hours</th>
+                    <th>Overtime Compensation</th>
+                    <th>Late Arrival Hours</th>
+                    <th>Late Arrival Deductions</th>
+                    <th>Total Day Pay</th>
+                </tr>
+                <tr><!-- Placeholder info -->
+                    <td>Monday</td>
+                    <td>{{emp_wpay.Mon_Time_In}}</td>
+                    <td>{{emp_wpay.Mon_Time_Out}}</td>
+                    <td>{{emp_wpay.Mon_Hours}}:{{emp_wpay.Mon_Minutes}}</td>
+                    <td>{{emp_wpay.Mon_Hours}}</td>
+                    <td>{{emp_wpay.Mon_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[1]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[1]}}</td>
+                    <td>{{emp_wpay.Mon_OT_Hours}}</td>
+                    <td>₱ {{emp_wpay.Mon_OT_Compensation}}</td>
+                    <td>{{emp_wpay.Mon_Late_Hours}}</td>
+                    <td>₱ {{emp_wpay.Mon_Late_Deduction}}</td>
+                    <td>₱ {{emp_wpay.Mon_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Tuesday</td>
+                    <td>{{emp_wpay.Tue_Time_In}}</td>
+                    <td>{{emp_wpay.Tue_Time_Out}}</td>
+                    <td>{{emp_wpay.Tue_Hours}}:{{emp_wpay.Tue_Minutes}}</td>
+                    <td>{{emp_wpay.Tue_Hours}}</td>
+                    <td>{{emp_wpay.Tue_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[2]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[2]}}</td>
+                    <td>{{emp_wpay.Tue_OT_Hours}}</td>
+                    <td>₱ {{emp_wpay.Tue_OT_Compensation}}</td>
+                    <td>{{emp_wpay.Tue_Late_Hours}}</td>
+                    <td>₱ {{emp_wpay.Tue_Late_Deduction}}</td>
+                    <td>₱ {{emp_wpay.Tue_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Wednesday</td>
+                    <td>{{emp_wpay.Wed_Time_In}}</td>
+                    <td>{{emp_wpay.Wed_Time_Out}}</td>
+                    <td>{{emp_wpay.Wed_Hours}}:{{emp_wpay.Wed_Minutes}}</td>
+                    <td>{{emp_wpay.Wed_Hours}}</td>
+                    <td>{{emp_wpay.Wed_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[3]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[3]}}</td>
+                    <td>{{emp_wpay.Wed_OT_Hours}}</td>
+                    <td>₱ {{emp_wpay.Wed_OT_Compensation}}</td>
+                    <td>{{emp_wpay.Wed_Late_Hours}}</td>
+                    <td>₱ {{emp_wpay.Wed_Late_Deduction}}</td>
+                    <td>₱ {{emp_wpay.Wed_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Thursday</td>
+                    <td>{{emp_wpay.Thu_Time_In}}</td>
+                    <td>{{emp_wpay.Thu_Time_Out}}</td>
+                    <td>{{emp_wpay.Thu_Hours}}:{{emp_wpay.Thu_Minutes}}</td>
+                    <td>{{emp_wpay.Thu_Hours}}</td>
+                    <td>{{emp_wpay.Thu_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[4]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[4]}}</td>
+                    <td>{{emp_wpay.Thu_OT_Hours}}</td>
+                    <td>₱ {{emp_wpay.Thu_OT_Compensation}}</td>
+                    <td>{{emp_wpay.Thu_Late_Hours}}</td>
+                    <td>₱ {{emp_wpay.Thu_Late_Deduction}}</td>
+                    <td>₱ {{emp_wpay.Thu_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Friday</td>
+                    <td>{{emp_wpay.Fri_Time_In}}</td>
+                    <td>{{emp_wpay.Fri_Time_Out}}</td>
+                    <td>{{emp_wpay.Fri_Hours}}:{{emp_wpay.Fri_Minutes}}</td>
+                    <td>{{emp_wpay.Fri_Hours}}</td>
+                    <td>{{emp_wpay.Fri_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[5]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[5]}}</td>
+                    <td>{{emp_wpay.Fri_OT_Hours}}</td>
+                    <td>₱ {{emp_wpay.Fri_OT_Compensation}}</td>
+                    <td>{{emp_wpay.Fri_Late_Hours}}</td>
+                    <td>₱ {{emp_wpay.Fri_Late_Deduction}}</td>
+                    <td>₱ {{emp_wpay.Fri_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Saturday</td>
+                    <td>{{emp_wpay.Sat_Time_In}}</td>
+                    <td>{{emp_wpay.Sat_Time_Out}}</td>
+                    <td>{{emp_wpay.Sat_Hours}}:{{emp_wpay.Sat_Minutes}}</td>
+                    <td>{{emp_wpay.Sat_Hours}}</td>
+                    <td>{{emp_wpay.Sat_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[6]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[6]}}</td>
+                    <td>{{emp_wpay.Sat_OT_Hours}}</td>
+                    <td>₱ {{emp_wpay.Sat_OT_Compensation}}</td>
+                    <td>{{emp_wpay.Sat_Late_Hours}}</td>
+                    <td>₱ {{emp_wpay.Sat_Late_Deduction}}</td>
+                    <td>₱ {{emp_wpay.Sat_Total_Pay}}</td>
+                </tr>
+                <tr>
+                    <td>Sunday</td>
+                    <td>{{emp_wpay.Sun_Time_In}}</td>
+                    <td>{{emp_wpay.Sun_Time_Out}}</td>
+                    <td>{{emp_wpay.Sun_Hours}}:{{emp_wpay.Sun_Minutes}}</td>
+                    <td>{{emp_wpay.Sun_Hours}}</td>
+                    <td>{{emp_wpay.Sun_Minutes}}</td>
+                    <td>₱ {{Total_Hour_Rate.[0]}}</td>
+                    <td>₱ {{Total_Minute_Rate.[0]}}</td>
+                    <td>{{emp_wpay.Sun_OT_Hours}}</td>
+                    <td>₱ {{emp_wpay.Sun_OT_Compensation}}</td>
+                    <td>{{emp_wpay.Sun_Late_Hours}}</td>
+                    <td>₱ {{emp_wpay.Sun_Late_Deduction}}</td>
+                    <td>₱ {{emp_wpay.Sun_Total_Pay}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="total-wkly-pay" style="margin: 2vh 2vh 2vh 2vh">
+                <h2>Total Weekly Pay: ₱{{emp_wpay.Weekly_Total_Pay}}</h2>
+        </div>
+
+    </div>
+    <div class="empman-btm wklyAdditional-admin" >
+            <div class="num-input-1">
+                <div>
+                    <p>Additional: ₱{{emp_wpay.Weekly_Total_Additional}}</p>
+                    <form id="additional-form-id">
+                        <input type="number" id="add-id"> 
+                        <input type="hidden" name="payroll-id" value="{{emp_wpay._id}}">
+                        <button type="button" id="payroll-additional-changes-btn">SUBMIT</button>
+                    </form>
+                </div>
+                <div>
+                    <p>Advance: ₱{{emp_wpay.Weekly_Total_Advance}}</p>
+                    <form id="advance-form-id">
+                        <input type="number" id="adv-id"> 
+                        <input type="hidden" name="payroll-id" value="{{emp_wpay._id}}">
+                        <button type="button" id="payroll-advance-changes-btn">SUBMIT</button>
+                    </form>
+                </div>
+                <div>
+                    <p>Deduction: ₱{{emp_wpay.Weekly_Total_Deduction}}</p>
+                    <form id="deduction-form-id">
+                        <input type="number" id="ded-id">
+                        <input type="hidden" name="payroll-id" value="{{emp_wpay._id}}">
+                        <button type="button" id="payroll-deduction-changes-btn">SUBMIT</button>
+                    </form>
+                </div>
+            </div>
+    </div>
+</div>
+{{>adminsidenav}}
+<script>
+    function navigateToEmpInfo() {
+        console.log('Employee Information clicked');
+        window.location.href = 'admin_empman_emprecs';
+    }
+
+    function navigateToWeeklyPayroll() {
+        console.log('Weekly Payroll clicked');
+        window.location.href = 'admin_empman_payroll';
+    }
+</script>
+<script src="/js/weekly-payroll.js"></script>
+</body>
+</html>
