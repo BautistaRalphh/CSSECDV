@@ -94,6 +94,15 @@ const admin_empman_emprecs_controller = {
 
         const target = await employee.findOne({Email: email});
         if(!target){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'VALIDATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: 'Employee update failed: employee not found'
+            });
+
             return res.status(404).json({message: "Employee not found."});
         }
 
@@ -137,6 +146,20 @@ const admin_empman_emprecs_controller = {
             return res.status(403).json({message: "Insufficient privileges to edit this account."});
         }
 
+
+        if(!firstName || !lastName || !address || !contactNumber){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'VALIDATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: 'Employee update failed: missing required fields'
+            });
+
+            return res.status(400).json({message: "Missing required fields."});
+        }
+
         const updateFields = {
             First_Name: firstName,
             Last_Name: lastName,
@@ -148,6 +171,15 @@ const admin_empman_emprecs_controller = {
             // 1. Complexity & length policy
             const pwErrors = validatePassword(password);
             if(pwErrors.length > 0){
+                    await logAuditEvent({
+                        email: req.session.Email,
+                        employeeType: req.session.Employee_Type,
+                        action: 'VALIDATION_FAILED',
+                        targetEmail: email,
+                        route: req.originalUrl,
+                        details: `Employee update failed: weak password (${pwErrors.join(', ')})`
+                    });
+                    
                 return res.status(400).json({message: `Password must contain: ${pwErrors.join(', ')}.`});
             }
 
@@ -156,6 +188,15 @@ const admin_empman_emprecs_controller = {
                 const ageMs = Date.now() - new Date(target.Password_Changed_At).getTime();
                 const oneDayMs = 24 * 60 * 60 * 1000;
                 if(ageMs < oneDayMs){
+                        await logAuditEvent({
+                            email: req.session.Email,
+                            employeeType: req.session.Employee_Type,
+                            action: 'VALIDATION_FAILED',
+                            targetEmail: email,
+                            route: req.originalUrl,
+                            details: 'Employee update failed: password less than one day old'
+                        });
+
                     return res.status(400).json({message: "Password cannot be changed yet. Passwords must be at least one day old before they can be changed."});
                 }
             }
@@ -166,6 +207,15 @@ const admin_empman_emprecs_controller = {
                 if(!oldHash) continue;
                 const match = await verifyPassword(password, oldHash);
                 if(match.isValid){
+                        await logAuditEvent({
+                            email: req.session.Email,
+                            employeeType: req.session.Employee_Type,
+                            action: 'VALIDATION_FAILED',
+                            targetEmail: email,
+                            route: req.originalUrl,
+                            details: 'Employee update failed: password reuse detected'
+                        });
+
                     return res.status(400).json({message: "New password cannot be the same as a previously used password."});
                 }
             }
@@ -205,12 +255,30 @@ const admin_empman_emprecs_controller = {
 
         const target = await employee.findOne({Email: employee_email});
         if(!target){
+                await logAuditEvent({
+                    email: req.session.Email,
+                    employeeType: req.session.Employee_Type,
+                    action: 'VALIDATION_FAILED',
+                    targetEmail: employee_email,
+                    route: req.originalUrl,
+                    details: 'Manager assignment failed: employee not found'
+                });
+
             return res.status(404).json({message: "Employee not found."});
         }
 
         if(manager_email){
             const mgr = await employee.findOne({Email: manager_email, Employee_Type: "Manager"});
             if(!mgr){
+                    await logAuditEvent({
+                        email: req.session.Email,
+                        employeeType: req.session.Employee_Type,
+                        action: 'VALIDATION_FAILED',
+                        targetEmail: employee_email,
+                        route: req.originalUrl,
+                        details: `Manager assignment failed: selected manager does not exist (${manager_email})`
+                    });
+
                 return res.status(400).json({message: "Selected manager does not exist."});
             }
         }
@@ -241,6 +309,14 @@ const admin_empman_emprecs_controller = {
 
         const target = await employee.findOne({Email: email});
         if(!target){
+                await logAuditEvent({
+                    email: req.session.Email,
+                    employeeType: req.session.Employee_Type,
+                    action: 'VALIDATION_FAILED',
+                    targetEmail: email,
+                    route: req.originalUrl,
+                    details: 'Account unlock failed: employee not found'
+                });
             return res.status(404).json({message: "Employee not found."});
         }
 

@@ -16,6 +16,14 @@ const login_controller = {
             const user_exists = await employee.findOne({Email: email});
 
             if(!user_exists){
+                await logAuditEvent({
+                    email: email || 'GUEST',
+                    employeeType: 'Guest',
+                    action: 'LOGIN_FAILED',
+                    route: req.originalUrl,
+                    details: 'Login failed: email not found'
+                });
+
                 return res.status(404).json({message: "Incorrect Credentials!"});
             }
 
@@ -25,6 +33,7 @@ const login_controller = {
                     email,
                     employeeType: user_exists.Employee_Type,
                     action: 'LOGIN_FAILED',
+                    route: req.originalUrl,
                     details: 'Login attempted on locked account'
                 });
                 return res.status(403).json({message: "Your account has been locked due to too many failed login attempts. Please contact your administrator."});
@@ -45,6 +54,7 @@ const login_controller = {
                     email,
                     employeeType: user_exists.Employee_Type,
                     action: 'LOGIN_FAILED',
+                    route: req.originalUrl,
                     details: `Invalid password. Attempt ${newAttempts}/5${shouldLock ? ' - Account locked' : ''}`
                 });
 
@@ -76,7 +86,9 @@ const login_controller = {
             await logAuditEvent({
                 email,
                 employeeType: user_exists.Employee_Type,
-                action: 'LOGIN'
+                action: 'LOGIN',
+                route: req.originalUrl,
+                details: 'Successful login'
             });
 
             const type = user_exists.Employee_Type;

@@ -1,22 +1,24 @@
 const AuditLog = require('../models/audit_log_model');
 
-async function logAuditEvent({ 
-    email, 
-    employeeType, 
+async function logAuditEvent({
+    email,
+    employeeType,
     action,
     targetEmail = null,
     route = null,
-    details = null 
-
+    details = null
 }) {
-    if (!email || !employeeType || !action) {
+    const safeEmail = email || 'GUEST';
+    const safeEmployeeType = employeeType || 'Guest';
+
+    if (!action) {
         return;
     }
 
     try {
         await AuditLog.create({
-            Email: email,
-            Employee_Type: employeeType,
+            Email: safeEmail,
+            Employee_Type: safeEmployeeType,
             Action: action,
             Target_Email: targetEmail,
             Route: route,

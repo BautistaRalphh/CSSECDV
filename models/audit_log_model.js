@@ -12,12 +12,15 @@ const audit_log_schema = new mongoose.Schema({
     Action: {
         type: String,
         enum: [
-            'LOGIN', 
+            'LOGIN',
             'LOGOUT',
             'UNAUTHORIZED_ACCESS',
             'AUTHORIZATION_FAILED',
             'EMPLOYEE_EDIT',
-            'MANAGER_ASSIGNED'
+            'MANAGER_ASSIGNED',
+            'LOGIN_FAILED',
+            'ACCOUNT_UNLOCKED',
+            'VALIDATION_FAILED'
         ],
         required: true
     },

@@ -18,6 +18,18 @@ const register_controller = {
     post_register: async function(req, res){
         const {firstName, lastName, address, contactNumber, email, password, employee_type} = req.body;
 
+        if(!firstName || !lastName || !address || !contactNumber || !email || !employee_type){
+            await logAuditEvent({
+                email: email || 'GUEST',
+                employeeType: req.session?.Employee_Type || 'Guest',
+                action: 'VALIDATION_FAILED',
+                route: req.originalUrl,
+                details: 'Registration failed: missing required fields'
+            });
+
+            return res.status(400).json({message: "Missing required fields!"});
+        }
+
         const requesterType = req.session?.Employee_Type;
         if(requesterType === "Manager" && (employee_type === "Admin" || employee_type === "Manager")){
             await logAuditEvent({
@@ -34,12 +46,36 @@ const register_controller = {
 
         const user_exists = await employee.findOne({Email: email});
         if(user_exists){
+            await logAuditEvent({
+                email: email || 'GUEST',
+                employeeType: req.session?.Employee_Type || 'Guest',
+                action: 'VALIDATION_FAILED',
+                route: req.originalUrl,
+                details: 'Registration failed: email already exists'
+            });
+
             return res.status(400).json({message: "Email Already Exists!"});
         }else if(!password){
+                await logAuditEvent({
+                    email: email || 'GUEST',
+                    employeeType: req.session?.Employee_Type || 'Guest',
+                    action: 'VALIDATION_FAILED',
+                    route: req.originalUrl,
+                    details: 'Registration failed: missing password'
+                });
+
             return res.status(400).json({message: "Missing Password!"});
         }else{
             const pwErrors = validatePassword(password);
             if(pwErrors.length > 0){
+                    await logAuditEvent({
+                        email: email || 'GUEST',
+                        employeeType: req.session?.Employee_Type || 'Guest',
+                        action: 'VALIDATION_FAILED',
+                        route: req.originalUrl,
+                        details: `Registration failed: weak password (${pwErrors.join(', ')})`
+                    });
+
                 return res.status(400).json({message: `Password must contain: ${pwErrors.join(', ')}.`});
             }
             try{

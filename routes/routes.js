@@ -42,13 +42,17 @@ async function initial_process(req, res, next){
 }
 
 async function recordAccessLog(req, action, details = null) {
-    await logAuditEvent({
-        email: req.session?.Email || req.body?.email || 'GUEST',
-        employeeType: req.session?.Employee_Type || 'Guest',
-        action,
-        route: req.originalUrl,
-        details
-    });
+    try{
+        await logAuditEvent({
+            email: req.session?.Email || req.body?.email || 'GUEST',
+            employeeType: req.session?.Employee_Type || 'Guest',
+            action,
+            route: req.originalUrl,
+            details
+        });
+    }catch(error){
+        console.error('Audit log failed:', error);
+    }
 }
 
 function must_be_logged_out(req, res, next){
@@ -174,12 +178,12 @@ app.get('/admin_retrieve_employee_total_wp', initial_process, manager_or_admin_a
 app.get('/admin_retrieve_emp_wpay', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.get_emp_wpay);
 app.post('/admin_update_payroll', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.post_update_payroll);
 
-app.post('/update_employee_payroll', update_payroll_controllers.post_update_employee_payroll);
+app.post('/update_employee_payroll', initial_process, admin_access, update_payroll_controllers.post_update_employee_payroll);
 
 //for emp salary particulars (include the process reqs)
 // app.get('/employeee_salary_particulars', employee_salary_particulars_controllers.get_salary_particulars);
-app.get('/salary_particulars', employee_salary_particulars_controllers.get_salary_particulars);
-app.post('/print_salary_particulars', employee_salary_particulars_controllers.post_print_salary_particulars);
+app.get('/salary_particulars', initial_process, employee_wfh_access, employee_salary_particulars_controllers.get_salary_particulars);
+app.post('/print_salary_particulars', initial_process, employee_wfh_access, employee_salary_particulars_controllers.post_print_salary_particulars);
 
 app.get('/admin_salary_particulars', initial_process, manager_or_admin_access, admin_salary_particulars_controllers.get_salary_particulars);
 app.get('/admin_retrieve_employee_total_sp', initial_process, manager_or_admin_access, admin_salary_particulars_controllers.get_emp_total);

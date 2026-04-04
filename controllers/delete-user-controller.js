@@ -107,6 +107,15 @@ const delete_user_controller = {
             }
         }
         else{
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'VALIDATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: 'Delete failed: target user does not exist'
+            });
+            
             return res.status(400).json({message: "There are no Existing Users!"});
         }
     }
