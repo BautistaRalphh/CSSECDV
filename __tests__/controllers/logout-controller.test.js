@@ -1,5 +1,8 @@
 const httpMocks = require('node-mocks-http');
 const logout_controller = require('../../controllers/logout-controller');
+const { logAuditEvent } = require('../../utils/audit-log');
+
+jest.mock('../../utils/audit-log');
 
 describe('logout-controller', () => {
     let req, res;
@@ -7,6 +10,8 @@ describe('logout-controller', () => {
     beforeEach(() => {
         req = {
             session: {
+                Email: 'test@example.com',
+                Employee_Type: 'Admin',
                 destroy: jest.fn((callback) => callback()) 
             }
         };
@@ -21,6 +26,11 @@ describe('logout-controller', () => {
 
             //verify that the session was destroyed
             expect(req.session.destroy).toHaveBeenCalled();
+            expect(logAuditEvent).toHaveBeenCalledWith({
+                email: 'test@example.com',
+                employeeType: 'Admin',
+                action: 'LOGOUT'
+            });
             //verify that the user was redirected to another page
             expect(res.redirect).toHaveBeenCalledWith('/');
         });

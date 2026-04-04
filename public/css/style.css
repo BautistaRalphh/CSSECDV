@@ -451,26 +451,35 @@ body{
 .admin-rightdash-mid button{
     width: 90%;
 }
-/* changes */
-.admin-rightdash-bottom h2 a {
-    color: var(--green-m); /* Use the green color variable */
+.sidebar-logout-row {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 12px 18px 0 18px;
+    box-sizing: border-box;
+}
+
+.global-logout-link {
+    background-color: var(--green-m);
+    color: var(--white-m);
     font-family: 'Archivo', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
-    text-decoration: none; /* Remove underline */
-    padding: 10px 20px;
-    border-radius: 5px;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
 }
 
-.admin-rightdash-bottom h2 a:hover {
-    background-color: var(--gray);
+.global-logout-link:hover {
+    background-color: var(--green-l);
     cursor: pointer;
 }
-.admin-rightdash-bottom h2 a:active {
-    background-color: var(--lightgray);
+
+.global-logout-link:active {
+    background-color: var(--green-d);
 }
-/* changes end here */
 .admin-leftdash{
     margin: 0.5vh 0.5vw 0.5vh 0.5vw;
 }

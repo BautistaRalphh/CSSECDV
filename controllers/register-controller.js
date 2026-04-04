@@ -6,18 +6,29 @@ Functions:
 
 const employee = require('../models/employee_model.js');
 const payroll = require('../models/payroll_model.js');
+const { logAuditEvent } = require('../utils/audit-log');
+const { hashPassword } = require('../utils/password');
 
 const register_controller = {
     get_register: function(req, res){
-        const isAdmin = req.session.Employee_Type === "Admin";
+        const isAdmin = req.session?.Employee_Type === "Admin";
         res.render('register', { isAdmin });
     }, 
 
     post_register: async function(req, res){
         const {firstName, lastName, address, contactNumber, email, password, employee_type} = req.body;
 
-        const requesterType = req.session.Employee_Type;
+        const requesterType = req.session?.Employee_Type;
         if(requesterType === "Manager" && (employee_type === "Admin" || employee_type === "Manager")){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'AUTHORIZATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: `Manager attempted to create restricted account type: ${employee_type}`
+            });
+
             return res.status(403).json({message: "Insufficient privileges to create this account type."});
         }
 
@@ -28,12 +39,13 @@ const register_controller = {
             return res.status(400).json({message: "Missing Password!"});
         }else{
             try{
+                const hashedPassword = await hashPassword(password);
                 const new_employee = new employee({
                     First_Name: firstName,
                     Last_Name: lastName,
                     Contact_Number: contactNumber,
                     Email: email,
-                    Password: password,
+                    Password: hashedPassword,
                     Address: address,
                     Employee_Type: employee_type,
                     IsTimedIn: false

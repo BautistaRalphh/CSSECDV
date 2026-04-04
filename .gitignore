@@ -1,2 +1,5 @@
 .env
 cypress/e2e/STSWENG.code-workspace
+node_modules/
+coverage/
+.vscode/

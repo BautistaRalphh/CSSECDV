@@ -7,6 +7,7 @@ Functions:
 
 const employee = require('../models/employee_model.js');
 const forgot_password = require('../models/forgot_password_model.js');
+const { logAuditEvent } = require('../utils/audit-log');
 const database = require('../models/database.js');
 
 const delete_user_controller = {
@@ -67,9 +68,18 @@ const delete_user_controller = {
 
         // Managers (Role A) cannot delete Admin or Manager accounts
         if(user_exists && req.session.Employee_Type === "Manager" &&
-           (user_exists.Employee_Type === "Admin" || user_exists.Employee_Type === "Manager")){
-            return res.status(403).json({message: "Insufficient privileges to delete this account."});
-        }
+            (user_exists.Employee_Type === "Admin" || user_exists.Employee_Type === "Manager")){
+                await logAuditEvent({
+                    email: req.session.Email,
+                    employeeType: req.session.Employee_Type,
+                    action: 'AUTHORIZATION_FAILED',
+                    targetEmail: email,
+                    route: req.originalUrl,
+                    details: `Manager attempted to delete restricted account type: ${user_exists.Employee_Type}`
+                });
+
+                return res.status(403).json({message: "Insufficient privileges to delete this account."});
+            }
 
         if(user_exists){
             const user_exists_forgot_password = await forgot_password.findOne({Email: email});

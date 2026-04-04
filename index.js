@@ -40,6 +40,7 @@ app.use(express.static('public'));
 
 database.connect();
 
+console.log('SESSION URI:', process.env.MONGODB_SESSION_URI);
 app.use(session({
     secret: 'session-secret-key', 
     resave: false,
@@ -74,4 +75,4 @@ app.use(function(req, res){
 // addDataPayroll.populate_payroll();
 app.listen(port, hostname, function() {
     console.log(`Server running at http://${hostname}:${port}`);
-}); 
+});

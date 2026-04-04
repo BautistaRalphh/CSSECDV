@@ -2,9 +2,11 @@ const httpMocks = require('node-mocks-http');
 const register_controller = require('../../controllers/register-controller.js');
 const employee = require('../../models/employee_model.js');
 const payroll = require('../../models/payroll_model.js');
+const { hashPassword } = require('../../utils/password');
 
 jest.mock('../../models/employee_model.js');
 jest.mock('../../models/payroll_model.js');
+jest.mock('../../utils/password');
 
 describe('register-controller', () => {
     let req, res;
@@ -34,7 +36,7 @@ describe('register-controller', () => {
 
             register_controller.get_register(req, res);
             //verify that the correct page was rendered
-            expect(res.render).toHaveBeenCalledWith('register');
+            expect(res.render).toHaveBeenCalledWith('register', { isAdmin: false });
         });
     });
 
@@ -44,6 +46,7 @@ describe('register-controller', () => {
 
             //assume there is no existing user
             employee.findOne.mockResolvedValue(null); 
+            hashPassword.mockResolvedValue('hashed-password');
 
             //save the new data
             employee.prototype.save.mockResolvedValue();
@@ -53,6 +56,7 @@ describe('register-controller', () => {
 
             // Verify employee and payroll creation
             expect(employee.findOne).toHaveBeenCalledWith({ Email: req.body.email });
+            expect(hashPassword).toHaveBeenCalledWith(req.body.password);
             expect(employee.prototype.save).toHaveBeenCalled();
             expect(payroll.prototype.save).toHaveBeenCalledTimes(3); //one for each week
 
@@ -97,6 +101,7 @@ describe('register-controller', () => {
 
             //assume the user does not yet exist
             employee.findOne.mockResolvedValue(null); 
+            hashPassword.mockResolvedValue('hashed-password');
             //simulate error
             employee.prototype.save.mockRejectedValue(new Error('Database error')); // Simulate save failure
 
