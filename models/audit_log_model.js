@@ -11,7 +11,26 @@ const audit_log_schema = new mongoose.Schema({
     },
     Action: {
         type: String,
-        enum: ['LOGIN', 'LOGOUT'],
+        enum: [
+            'LOGIN', 
+            'LOGOUT',
+            'UNAUTHORIZED_ACCESS',
+            'AUTHORIZATION_FAILED',
+            'EMPLOYEE_EDIT',
+            'MANAGER_ASSIGNED'
+        ],
+        Target_Email: {
+        type: String,
+        default: null
+    },
+    Route: {
+        type: String,
+        default: null
+    },
+    Details: {
+        type: String,
+        default: null
+    },
         required: true
     },
     Logged_At: {

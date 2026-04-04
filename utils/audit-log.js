@@ -1,6 +1,14 @@
 const AuditLog = require('../models/audit_log_model');
 
-async function logAuditEvent({ email, employeeType, action }) {
+async function logAuditEvent({ 
+    email, 
+    employeeType, 
+    action,
+    targetEmail = null,
+    route = null,
+    details = null 
+
+}) {
     if (!email || !employeeType || !action) {
         return;
     }
@@ -9,7 +17,10 @@ async function logAuditEvent({ email, employeeType, action }) {
         await AuditLog.create({
             Email: email,
             Employee_Type: employeeType,
-            Action: action
+            Action: action,
+            Target_Email: targetEmail,
+            Route: route,
+            Details: details
         });
     } catch (error) {
         console.error('Error recording audit log:', error);

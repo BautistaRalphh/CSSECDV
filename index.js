@@ -40,6 +40,7 @@ app.use(express.static('public'));
 
 database.connect();
 
+console.log('SESSION URI:', process.env.MONGODB_SESSION_URI);
 app.use(session({
     secret: 'session-secret-key', 
     resave: false,

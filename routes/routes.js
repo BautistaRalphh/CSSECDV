@@ -21,20 +21,34 @@ const admin_notifs_controllers = require('../controllers/admin-notifs-controller
 
 const register_controllers = require('../controllers/register-controller');
 
+//for logs
+const { logAuditEvent } = require('../utils/audit-log');
+
 //for salary particulars page
 const employee_salary_particulars_controllers = require('../controllers/employee-salary-particulars-controller.js');
 const admin_salary_particulars_controllers = require('../controllers/admin-salary-particulars-controller.js');
- 
+
 const express = require('express');
 const app = express();
 app.use(express.json());
 
-function initial_process(req, res, next){
+async function initial_process(req, res, next){
     if(!req.session.Email){
-        res.redirect('/');
+        await recordAccessLog(req, 'UNAUTHORIZED_ACCESS', 'Attempted access to protected route without login');
+        return res.redirect('/');
     }else{
         next();
     }
+}
+
+async function recordAccessLog(req, action, details = null) {
+    await logAuditEvent({
+        email: req.session?.Email || req.body?.email || 'GUEST',
+        employeeType: req.session?.Employee_Type || 'Guest',
+        action,
+        route: req.originalUrl,
+        details
+    });
 }
 
 function must_be_logged_out(req, res, next){
@@ -53,51 +67,60 @@ function must_be_logged_out(req, res, next){
     }
 }
 
-function employee_access(req, res, next){
+async function employee_access(req, res, next){
     if(req.session.Employee_Type === "Work From Home"){
-        res.redirect('/work_from_home_clockpage');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Work From Home tried to access Employee-only route');
+        return res.redirect('/work_from_home_clockpage');
     }else{
         next();
     }
 }
 
-function wfh_access(req, res, next){
+async function wfh_access(req, res, next){
     if(req.session.Employee_Type === "Employee"){
-        res.redirect('/employee_clockpage');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Employee tried to access Work From Home-only route');
+        return res.redirect('/employee_clockpage');
     }else{
         next();
     }
 }
 
-function employee_wfh_access(req, res, next){
+async function employee_wfh_access(req, res, next){
     if(req.session.Employee_Type === "Admin"){
-        res.redirect('/admin_dashboard');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Admin tried to access employee/wfh route');
+        return res.redirect('/admin_dashboard');
     }else if(req.session.Employee_Type === "Manager"){
-        res.redirect('/admin_empman_emprecs');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Manager tried to access employee/wfh route');
+        return res.redirect('/admin_empman_emprecs');
     }else{
         next();
     }
 }
 
 // Administrator-only access
-function admin_access(req, res, next){
+async function admin_access(req, res, next){
     if(req.session.Employee_Type === "Employee"){
-        res.redirect('/employee_clockpage');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Employee tried to access admin-only route');
+        return res.redirect('/employee_clockpage');
     }else if(req.session.Employee_Type === "Work From Home"){
-        res.redirect('/work_from_home_clockpage');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Work From Home tried to access admin-only route');
+        return res.redirect('/work_from_home_clockpage');
     }else if(req.session.Employee_Type === "Manager"){
-        res.redirect('/admin_empman_emprecs');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Manager tried to access admin-only route');
+        return res.redirect('/admin_empman_emprecs');
     }else{
         next();
     }
 }
 
 // Manager or Administrator access 
-function manager_or_admin_access(req, res, next){
+async function manager_or_admin_access(req, res, next){
     if(req.session.Employee_Type === "Employee"){
-        res.redirect('/employee_clockpage');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Employee tried to access manager/admin route');
+        return res.redirect('/employee_clockpage');
     }else if(req.session.Employee_Type === "Work From Home"){
-        res.redirect('/work_from_home_clockpage');
+        await recordAccessLog(req, 'AUTHORIZATION_FAILED', 'Work From Home tried to access manager/admin route');
+        return res.redirect('/work_from_home_clockpage');
     }else{
         next();
     }

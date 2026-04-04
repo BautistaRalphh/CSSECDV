@@ -6,6 +6,7 @@ Functions:
 
 const employee = require('../models/employee_model.js');
 const payroll = require('../models/payroll_model.js');
+const { logAuditEvent } = require('../utils/audit-log');
 const { hashPassword } = require('../utils/password');
 
 const register_controller = {
@@ -19,6 +20,15 @@ const register_controller = {
 
         const requesterType = req.session?.Employee_Type;
         if(requesterType === "Manager" && (employee_type === "Admin" || employee_type === "Manager")){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'AUTHORIZATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: `Manager attempted to create restricted account type: ${employee_type}`
+            });
+
             return res.status(403).json({message: "Insufficient privileges to create this account type."});
         }
 

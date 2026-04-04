@@ -8,6 +8,7 @@ Functions:
 
 const employee = require('../models/employee_model.js');
 const database = require('../models/database.js');
+const { logAuditEvent } = require('../utils/audit-log');
 const { hashPassword } = require('../utils/password');
 
 const admin_empman_emprecs_controller = {
@@ -50,6 +51,15 @@ const admin_empman_emprecs_controller = {
 
         // Managers can only view employees assigned to them
         if(requesterType === "Manager" && target && target.Manager_Email !== req.session.Email){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'AUTHORIZATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: 'Manager attempted to view employee not assigned to them'
+            });
+
             return res.status(403).send("You can only view records of employees assigned to you.");
         }
 
@@ -88,15 +98,42 @@ const admin_empman_emprecs_controller = {
         }
 
         if(requesterType === "Manager" && target.Manager_Email !== req.session.Email){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'AUTHORIZATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: 'Manager attempted to edit employee not assigned to them'
+            });
+
             return res.status(403).json({message: "You can only edit employees assigned to you."});
         }
 
         if(requesterType === "Admin" && target.Employee_Type === "Admin"){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'AUTHORIZATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: 'Admin attempted to edit another admin account'
+            });
+
             return res.status(403).json({message: "Administrators cannot edit other administrator accounts."});
         }
 
         if(requesterType === "Manager" &&
-           (target.Employee_Type === "Admin" || target.Employee_Type === "Manager")){
+            (target.Employee_Type === "Admin" || target.Employee_Type === "Manager")){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'AUTHORIZATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: 'Manager attempted to edit Admin/Manager account'
+            });
+
             return res.status(403).json({message: "Insufficient privileges to edit this account."});
         }
 
@@ -117,6 +154,16 @@ const admin_empman_emprecs_controller = {
 
         try{
             await database.updateOne(employee, {Email: email}, {$set: updateFields});
+            
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'EMPLOYEE_EDIT',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: `Updated employee info fields: ${Object.keys(updateFields).join(', ')}`
+            });
+
             res.json({success: true, message: "Employee info updated successfully!"});
         }catch(error){
             console.error("Error updating employee info:", error);
@@ -141,6 +188,18 @@ const admin_empman_emprecs_controller = {
 
         try{
             await database.updateOne(employee, {Email: employee_email}, {$set: {Manager_Email: manager_email || null}});
+
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'MANAGER_ASSIGNED',
+                targetEmail: employee_email,
+                route: req.originalUrl,
+                details: manager_email
+                    ? `Assigned manager ${manager_email} to employee`
+                    : 'Removed assigned manager from employee'
+            });
+
             res.json({success: true, message: "Manager assigned successfully!"});
         }catch(error){
             console.error("Error assigning manager:", error);
