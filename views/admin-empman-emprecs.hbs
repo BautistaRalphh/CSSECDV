@@ -38,6 +38,16 @@
                 {{#if emp_sum}}
                 <div class="info-container">
                     <input type="hidden" id="edit-email" value="{{emp_sum.Email}}">
+
+                    {{!-- Account status badge --}}
+                    <p>
+                        <span class="label">Account Status:</span>
+                        {{#if emp_sum.Account_Locked}}
+                            <span class="account-status-badge locked">&#x1F512; Locked</span>
+                        {{else}}
+                            <span class="account-status-badge active">&#x2714; Active</span>
+                        {{/if}}
+                    </p>
                     <p><span class="label">First Name:</span> <input type="text" id="edit-firstName" value="{{emp_sum.First_Name}}" {{#unless canEdit}}disabled{{/unless}}></p>
                     <p><span class="label">Last Name:</span> <input type="text" id="edit-lastName" value="{{emp_sum.Last_Name}}" {{#unless canEdit}}disabled{{/unless}}></p>
                     <p><span class="label">Address:</span> <input type="text" id="edit-address" value="{{emp_sum.Address}}" {{#unless canEdit}}disabled{{/unless}}></p>
@@ -60,6 +70,13 @@
                     <div class="ad-left-btn" style="margin-top: 10px;">
                         <button type="button" class="ad-leftdash-btn" onclick="saveEmployeeInfo()"><p>Save Changes</p></button>
                     </div>
+                    {{/if}}
+                    {{#if isAdmin}}
+                    {{#if emp_sum.Account_Locked}}
+                    <div class="ad-left-btn" style="margin-top: 8px;">
+                        <button type="button" class="ad-leftdash-btn unlock-btn" onclick="unlockAccount()"><p>&#x1F513; Unlock Account</p></button>
+                    </div>
+                    {{/if}}
                     {{/if}}
                     {{#if canAssignManager}}
                     <hr style="margin: 16px 0;">

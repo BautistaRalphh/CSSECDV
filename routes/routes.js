@@ -169,6 +169,7 @@ app.get('/admin_empman_emprecs', initial_process, manager_or_admin_access, admin
 app.post('/display_specific_employee_records', initial_process, manager_or_admin_access, admin_empman_emprecs_controllers.post_specific_emprecs);
 app.post('/update_employee_info', initial_process, manager_or_admin_access, admin_empman_emprecs_controllers.post_update_employee_info);
 app.post('/assign_manager', initial_process, admin_access, admin_empman_emprecs_controllers.post_assign_manager);
+app.post('/unlock_account', initial_process, admin_access, admin_empman_emprecs_controllers.post_unlock_account);
 app.get('/admin_retrieve_employee_total_wp', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.get_emp_total);
 app.get('/admin_retrieve_emp_wpay', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.get_emp_wpay);
 app.post('/admin_update_payroll', initial_process, manager_or_admin_access, admin_empman_payroll_controllers.post_update_payroll);

@@ -48,14 +48,22 @@ async function saveEmployeeInfo(){
     const employee_type = employeeTypeEl ? employeeTypeEl.value : null;
 
     if(!firstName || !lastName || !address || !contactNumber){
-        alert("Please fill in all required fields.");
+        showToast("Please fill in all required fields.", "warning");
         return;
     }
 
     const contactRegex = /^09\d{9}$/;
     if(!contactRegex.test(contactNumber)){
-        alert("Invalid contact number format. Must be 11 digits starting with 09.");
+        showToast("Invalid contact number format. Must be 11 digits starting with 09.", "error");
         return;
+    }
+
+    if(password){
+        const pwErrors = validatePasswordClient(password);
+        if(pwErrors.length > 0){
+            showToast("Password must contain: " + pwErrors.join(', ') + ".", "error");
+            return;
+        }
     }
 
     try{
@@ -66,13 +74,13 @@ async function saveEmployeeInfo(){
         });
         const data = await response.json();
         if(data.success){
-            alert(data.message);
+            showToast(data.message, "success");
         }else{
-            alert(data.message || "Update failed.");
+            showToast(data.message || "Update failed.", "error");
         }
     }catch(error){
         console.error('Error saving employee info:', error);
-        alert("An error occurred while saving.");
+        showToast("An error occurred while saving.", "error");
     }
 }
 
@@ -89,13 +97,53 @@ async function assignManager(){
         });
         const data = await response.json();
         if(data.success){
-            alert(data.message);
+            showToast(data.message, "success");
         }else{
-            alert(data.message || "Assignment failed.");
+            showToast(data.message || "Assignment failed.", "error");
         }
     }catch(error){
         console.error('Error assigning manager:', error);
-        alert("An error occurred while assigning manager.");
+        showToast("An error occurred while assigning manager.", "error");
     }
+}
+
+async function unlockAccount(){
+    const email = document.getElementById("edit-email").value;
+
+    try{
+        const response = await fetch('/unlock_account', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email})
+        });
+        const data = await response.json();
+        if(data.success){
+            showToast(data.message, "success");
+            // Refresh the employee record so the badge and button update
+            setTimeout(() => {
+                const selectedEmployee = document.getElementById("selectedEmployee");
+                if(selectedEmployee){
+                    const evt = new Event('change');
+                    selectedEmployee.dispatchEvent(evt);
+                }
+            }, 800);
+        }else{
+            showToast(data.message || "Unlock failed.", "error");
+        }
+    }catch(error){
+        console.error('Error unlocking account:', error);
+        showToast("An error occurred while unlocking the account.", "error");
+    }
+}
+
+// Password complexity policy (mirrors server-side rules)
+function validatePasswordClient(password) {
+    const errors = [];
+    if (!password || password.length < 12)   errors.push("at least 12 characters long");
+    if (!/[A-Z]/.test(password))             errors.push("at least one uppercase letter");
+    if (!/[a-z]/.test(password))             errors.push("at least one lowercase letter");
+    if (!/[0-9]/.test(password))             errors.push("at least one digit");
+    if (!/[^A-Za-z0-9]/.test(password))      errors.push("at least one special character");
+    return errors;
 }
 

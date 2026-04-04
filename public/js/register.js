@@ -19,19 +19,25 @@ document.addEventListener("DOMContentLoaded", function(){
         var employee_type_input = document.getElementById("employee-type").value;
 
         if (!first_name_input || !last_name_input || !password_input || !address_input) {
-            alert("Please fill in all fields");
+            showToast("Please fill in all fields.", "warning");
             return; 
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email_input)) {
-            alert("Invalid email format");
+            showToast("Invalid email format.", "error");
             return;
         }
 
         const contactRegex =/^09\d{9}$/
         if (!contactRegex.test(contact_input)) {
-            alert("Invalid contact number format");
+            showToast("Invalid contact number format. Must be 11 digits starting with 09.", "error");
+            return;
+        }
+
+        const pwErrors = validatePasswordClient(password_input);
+        if(pwErrors.length > 0){
+            showToast("Password must contain: " + pwErrors.join(', ') + ".", "error");
             return;
         }
 
@@ -56,10 +62,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 togglePopup();
                 togglePopup2();
             }else{
-                console.log(data.message);
+                togglePopup(); // close the confirm popup first
+                showToast(data.message || "Registration failed.", "error");
             }
         }catch(error){
             console.error(error);
+            showToast("An unexpected error occurred. Please try again.", "error");
         }
     }
 
@@ -71,3 +79,14 @@ function togglePopup(){
 function togglePopup2(){
     document.getElementById("popup-3").classList.toggle("active");
 };
+
+// Password complexity policy (mirrors server-side rules)
+function validatePasswordClient(password) {
+    const errors = [];
+    if (!password || password.length < 12)   errors.push("at least 12 characters long");
+    if (!/[A-Z]/.test(password))             errors.push("at least one uppercase letter");
+    if (!/[a-z]/.test(password))             errors.push("at least one lowercase letter");
+    if (!/[0-9]/.test(password))             errors.push("at least one digit");
+    if (!/[^A-Za-z0-9]/.test(password))      errors.push("at least one special character");
+    return errors;
+}

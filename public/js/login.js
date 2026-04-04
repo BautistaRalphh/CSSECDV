@@ -29,15 +29,47 @@ document.addEventListener("DOMContentLoaded", function(){
             const data = await response.json();
 
             if(data.success){
-                if(data.type === "Employee"){
-                    window.location.href = '/employee_clockpage';
-                }else if (data.type === "Work From Home"){
-                    window.location.href = '/work_from_home_clockpage';
-                }else if (data.type === "Manager"){
-                    window.location.href = '/admin_empman_emprecs';
+                const redirectUrl = data.type === "Employee"        ? '/employee_clockpage'
+                                  : data.type === "Work From Home"  ? '/work_from_home_clockpage'
+                                  : data.type === "Manager"         ? '/admin_empman_emprecs'
+                                  : '/admin_dashboard';
+
+                // Build styled activity rows
+                const hasActivity = data.lastLogin || data.lastFailedLogin;
+                if(hasActivity){
+                    const body = document.getElementById("activity-modal-body");
+                    body.innerHTML = "";
+
+                    if(data.lastLogin){
+                        const row = document.createElement("div");
+                        row.className = "activity-modal-row success";
+                        row.innerHTML = `
+                            <i class="fi fi-sr-check-circle"></i>
+                            <div class="activity-modal-row-text">
+                                <span class="activity-modal-row-label">Last successful login</span>
+                                <span class="activity-modal-row-value">${new Date(data.lastLogin).toLocaleString()}</span>
+                            </div>`;
+                        body.appendChild(row);
+                    }
+                    if(data.lastFailedLogin){
+                        const row = document.createElement("div");
+                        row.className = "activity-modal-row warning";
+                        row.innerHTML = `
+                            <i class="fi fi-sr-triangle-warning"></i>
+                            <div class="activity-modal-row-text">
+                                <span class="activity-modal-row-label">Last failed login attempt</span>
+                                <span class="activity-modal-row-value">${new Date(data.lastFailedLogin).toLocaleString()}</span>
+                            </div>`;
+                        body.appendChild(row);
+                    }
+
+                    document.getElementById("activity-modal-overlay").classList.add("active");
+                    document.getElementById("activity-modal-continue").onclick = function(){
+                        window.location.href = redirectUrl;
+                    };
                 }else{
-                    window.location.href = '/admin_dashboard';
-                }    
+                    window.location.href = redirectUrl;
+                }
             }else{
                 error_message.textContent = data.message;
             }

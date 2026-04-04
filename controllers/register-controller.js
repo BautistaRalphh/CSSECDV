@@ -7,7 +7,7 @@ Functions:
 const employee = require('../models/employee_model.js');
 const payroll = require('../models/payroll_model.js');
 const { logAuditEvent } = require('../utils/audit-log');
-const { hashPassword } = require('../utils/password');
+const { hashPassword, validatePassword } = require('../utils/password');
 
 const register_controller = {
     get_register: function(req, res){
@@ -38,6 +38,10 @@ const register_controller = {
         }else if(!password){
             return res.status(400).json({message: "Missing Password!"});
         }else{
+            const pwErrors = validatePassword(password);
+            if(pwErrors.length > 0){
+                return res.status(400).json({message: `Password must contain: ${pwErrors.join(', ')}.`});
+            }
             try{
                 const hashedPassword = await hashPassword(password);
                 const new_employee = new employee({
@@ -48,7 +52,8 @@ const register_controller = {
                     Password: hashedPassword,
                     Address: address,
                     Employee_Type: employee_type,
-                    IsTimedIn: false
+                    IsTimedIn: false,
+                    Password_Changed_At: new Date()
                 });
                 await new_employee.save();
                 if(employee_type === "Employee" || employee_type === "Work From Home"){
