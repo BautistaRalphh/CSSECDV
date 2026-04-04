@@ -19,7 +19,9 @@ const audit_log_schema = new mongoose.Schema({
             'EMPLOYEE_EDIT',
             'MANAGER_ASSIGNED'
         ],
-        Target_Email: {
+        required: true
+    },
+    Target_Email: {
         type: String,
         default: null
     },
@@ -30,8 +32,6 @@ const audit_log_schema = new mongoose.Schema({
     Details: {
         type: String,
         default: null
-    },
-        required: true
     },
     Logged_At: {
         type: Date,
