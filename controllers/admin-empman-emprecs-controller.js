@@ -10,6 +10,7 @@ const employee = require('../models/employee_model.js');
 const database = require('../models/database.js');
 const { logAuditEvent } = require('../utils/audit-log');
 const { hashPassword, verifyPassword, validatePassword } = require('../utils/password');
+const { validateEmployeeInput } = require('../utils/validation');
 
 const admin_empman_emprecs_controller = {
     get_emprecs: async function(req, res){
@@ -89,7 +90,7 @@ const admin_empman_emprecs_controller = {
     },
 
     post_update_employee_info: async function(req, res){
-        const {email, firstName, lastName, address, contactNumber, password, employee_type} = req.body;
+        const {email, firstName, lastName, address, contactNumber, currentPassword, password, employee_type} = req.body;
         const requesterType = req.session.Employee_Type;
 
         const target = await employee.findOne({Email: email});
@@ -160,6 +161,20 @@ const admin_empman_emprecs_controller = {
             return res.status(400).json({message: "Missing required fields."});
         }
 
+        // Server-side input validation (range + length)
+        const inputErrors = validateEmployeeInput({firstName, lastName, address, contactNumber}, false);
+        if(inputErrors.length > 0){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'VALIDATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: `Employee update failed: ${inputErrors.join(', ')}`
+            });
+            return res.status(400).json({message: inputErrors.join(' ')});
+        }
+
         const updateFields = {
             First_Name: firstName,
             Last_Name: lastName,
@@ -168,6 +183,34 @@ const admin_empman_emprecs_controller = {
         };
 
         if(password){
+            // 0. Re-authenticate: require current password before allowing password change
+            if(!currentPassword){
+                await logAuditEvent({
+                    email: req.session.Email,
+                    employeeType: req.session.Employee_Type,
+                    action: 'VALIDATION_FAILED',
+                    targetEmail: email,
+                    route: req.originalUrl,
+                    details: 'Password change failed: current password not provided for re-authentication'
+                });
+                return res.status(400).json({message: "Current password is required to change the password."});
+            }
+
+            // Verify the requester's own password for re-authentication
+            const requester = await employee.findOne({Email: req.session.Email});
+            const reAuthCheck = await verifyPassword(currentPassword, requester.Password);
+            if(!reAuthCheck.isValid){
+                await logAuditEvent({
+                    email: req.session.Email,
+                    employeeType: req.session.Employee_Type,
+                    action: 'VALIDATION_FAILED',
+                    targetEmail: email,
+                    route: req.originalUrl,
+                    details: 'Password change failed: re-authentication failed (incorrect current password)'
+                });
+                return res.status(401).json({message: "Current password is incorrect. Re-authentication failed."});
+            }
+
             // 1. Complexity & length policy
             const pwErrors = validatePassword(password);
             if(pwErrors.length > 0){

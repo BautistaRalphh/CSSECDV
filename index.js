@@ -68,7 +68,21 @@ schedule.scheduleJob('0 0 * * 0', function(){
 });
 
 app.use(function(req, res){
-    res.status(404).send('Error 404: Page Not Found');
+    res.status(404).render('error', {
+        statusCode: 404,
+        title: 'Page Not Found',
+        message: 'The page you are looking for does not exist or has been moved.'
+    });
+});
+
+// Generic error handler — no stack traces or debug info exposed (2.4.1, 2.4.2)
+app.use(function(err, req, res, next){
+    console.error('Unhandled error:', err);
+    res.status(500).render('error', {
+        statusCode: 500,
+        title: 'Internal Server Error',
+        message: 'Something went wrong. Please try again later or contact your administrator.'
+    });
 });
 
 // addData.populateEmployees();

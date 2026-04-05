@@ -53,6 +53,7 @@
                     <p><span class="label">Address:</span> <input type="text" id="edit-address" value="{{emp_sum.Address}}" {{#unless canEdit}}disabled{{/unless}}></p>
                     <p><span class="label">Contact Number:</span> <input type="text" id="edit-contactNumber" value="{{emp_sum.Contact_Number}}" {{#unless canEdit}}disabled{{/unless}}></p>
                     <p><span class="label">Email:</span> <span class="value">{{emp_sum.Email}}</span></p>
+                    <p><span class="label">Current Password (required to change password):</span> <input type="password" id="edit-currentPassword" placeholder="Enter your current password" {{#unless canEdit}}disabled{{/unless}}></p>
                     <p><span class="label">New Password:</span> <input type="password" id="edit-password" placeholder="Leave blank to keep current" {{#unless canEdit}}disabled{{/unless}}></p>
                     {{#if isAdmin}}
                     <p><span class="label">Role:</span>

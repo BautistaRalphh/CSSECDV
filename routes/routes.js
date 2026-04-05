@@ -133,6 +133,7 @@ async function manager_or_admin_access(req, res, next){
 //initial routes access
 app.get('/', must_be_logged_out, controllers.get_index);
 app.post('/add_forgot_password', must_be_logged_out, forgot_password_controllers.post_add_forgot_password);
+app.post('/get_security_question', must_be_logged_out, forgot_password_controllers.get_security_question);
 app.post('/login_account', must_be_logged_out, login_controllers.post_login);
 app.get('/logout', initial_process, logout_controllers.get_logout);
 
@@ -192,4 +193,7 @@ app.post('/admin_print_salary_particulars', initial_process, manager_or_admin_ac
 
 module.exports = app;
 
-//get_salary_particulars_details
+//simulate error 500
+app.get('/simulate-error', (req, res, next) => {
+  nonExistentFunction();
+});

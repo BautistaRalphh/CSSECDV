@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error - Green at Work</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/css/images/greenatwork-logo.png">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            height: 100%;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 320px;
+            min-width: 320px;
+            max-width: 90vw;
+            max-height: 90vh;
+            margin: auto;
+            text-align: center;
+            padding: 40px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            background: #fff;
+            border-radius: 16px;
+        }
+        .error-code {
+            font-size: 96px;
+            font-weight: bold;
+            color: #86B745;
+            margin-bottom: 10px;
+        }
+        .error-message {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .error-detail {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .error-link {
+            display: inline-block;
+            background-color: #86B745;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .error-link:hover {
+            background-color: #6f9a38;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">{{statusCode}}</div>
+        <div class="error-message">{{title}}</div>
+        <div class="error-detail">{{message}}</div>
+        <a href="/" class="error-link">Return to Home</a>
+    </div>
+</body>
+</html>
