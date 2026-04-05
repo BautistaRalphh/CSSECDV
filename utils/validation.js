@@ -1,6 +1,3 @@
-// Server-side input validation utilities
-// Requirement 2.3: All validation failures result in input rejection (no sanitization)
-
 const FIELD_LIMITS = {
     firstName:     { maxLength: 50,  label: 'First Name' },
     lastName:      { maxLength: 50,  label: 'Last Name' },
