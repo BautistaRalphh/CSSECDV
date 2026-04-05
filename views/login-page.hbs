@@ -39,10 +39,19 @@
     <div class="overlay"></div>
     <div class="content">
         <div class="close-btn" onclick="closeBtn()">&times;</div>
-        <h1>Please Enter Your Email</h1>
+        <h1>Forgot Password</h1>
         <form id="forgot-password-form-id">
             <div class="log-field">
                 <input type="email" name="email" placeholder="Email" id="for-pas-email" class="log-text">
+            </div>
+            <div id="security-question-section" style="display:none;">
+                <p id="security-question-display" style="font-weight:bold; color: #333; margin: 10px 0;"></p>
+                <div class="log-field">
+                    <input type="text" name="securityAnswer" placeholder="Security Answer" id="for-pas-answer" class="log-text">
+                </div>
+            </div>
+            <div>
+                <p id="forgot-error" style="font-weight: bold; color: red; text-align: center;"></p>
             </div>
             <div>
                 <button type="button" id="forgot-password-button-id"><h2>Submit</h2></button>

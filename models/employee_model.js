@@ -69,6 +69,14 @@ var employee_schema = new mongoose.Schema({
     Last_Failed_Login: {
         type: Date,
         default: null
+    },
+    Security_Question: {
+        type: String,
+        default: null
+    },
+    Security_Answer_Hash: {
+        type: String,
+        default: null
     }
 });
 

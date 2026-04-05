@@ -27,16 +27,32 @@ const login_controller = {
                 return res.status(404).json({message: "Incorrect Credentials!"});
             }
 
-            // Account lock check
+            // Account lock check with auto-unlock after 15 minutes
             if(user_exists.Account_Locked){
-                await logAuditEvent({
-                    email,
-                    employeeType: user_exists.Employee_Type,
-                    action: 'LOGIN_FAILED',
-                    route: req.originalUrl,
-                    details: 'Login attempted on locked account'
-                });
-                return res.status(403).json({message: "Your account has been locked due to too many failed login attempts. Please contact your administrator."});
+                const lockDurationMs = 15 * 60 * 1000; // 15 minutes
+                const lockedAt = user_exists.Account_Locked_At ? new Date(user_exists.Account_Locked_At).getTime() : 0;
+                const elapsed = Date.now() - lockedAt;
+
+                if(elapsed < lockDurationMs){
+                    await logAuditEvent({
+                        email,
+                        employeeType: user_exists.Employee_Type,
+                        action: 'LOGIN_FAILED',
+                        route: req.originalUrl,
+                        details: 'Login attempted on locked account'
+                    });
+                    const remainingMin = Math.ceil((lockDurationMs - elapsed) / 60000);
+                    return res.status(403).json({message: `Your account has been locked due to too many failed login attempts. Please try again in ${remainingMin} minute(s) or contact your administrator.`});
+                }
+
+                // Auto-unlock: lockout period has elapsed
+                await employee.updateOne({Email: email}, {$set: {
+                    Account_Locked: false,
+                    Failed_Login_Attempts: 0,
+                    Account_Locked_At: null
+                }});
+                user_exists.Account_Locked = false;
+                user_exists.Failed_Login_Attempts = 0;
             }
 
             const passwordCheck = await verifyPassword(password, user_exists.Password);
@@ -59,7 +75,7 @@ const login_controller = {
                 });
 
                 if(shouldLock){
-                    return res.status(403).json({message: "Your account has been locked due to too many failed login attempts. Please contact your administrator."});
+                    return res.status(403).json({message: "Your account has been locked due to too many failed login attempts. Please try again in 15 minutes or contact your administrator."});
                 }
                 return res.status(401).json({message: "Incorrect Credentials!"});
             }

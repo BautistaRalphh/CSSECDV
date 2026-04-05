@@ -7,12 +7,57 @@ Functions:
 const forgot_password = require('../models/forgot_password_model.js'); 
 const employee = require('../models/employee_model.js'); 
 const database = require('../models/database.js');
+const { verifyPassword } = require('../utils/password');
+const { logAuditEvent } = require('../utils/audit-log');
 
 const forgot_password_controller = {
+    get_security_question: async function(req, res){
+        const { email } = req.body;
+        if(!email){
+            return res.status(400).json({success: false, message: "Email is required."});
+        }
+        const user = await employee.findOne({Email: email});
+        if(!user || !user.Security_Question){
+            await logAuditEvent({
+                email: email,
+                employeeType: 'Guest',
+                action: 'VALIDATION_FAILED',
+                route: req.originalUrl,
+                details: 'Forgot password: email not found or no security question set'
+            });
+            return res.status(404).json({success: false, message: "Email not found or no security question configured."});
+        }
+        return res.json({success: true, securityQuestion: user.Security_Question});
+    },
+
     post_add_forgot_password: async function (req, res){
-        const {email, cTime} = req.body;
+        const {email, cTime, securityAnswer} = req.body;
         const user_exists = await employee.findOne({Email: email});
         if(user_exists){
+            // Verify security answer
+            if(!securityAnswer || !user_exists.Security_Answer_Hash){
+                await logAuditEvent({
+                    email: email,
+                    employeeType: user_exists.Employee_Type || 'Guest',
+                    action: 'VALIDATION_FAILED',
+                    route: req.originalUrl,
+                    details: 'Forgot password: missing security answer'
+                });
+                return res.json({success: false, message: "Security answer is required."});
+            }
+
+            const answerCheck = await verifyPassword(securityAnswer.trim().toLowerCase(), user_exists.Security_Answer_Hash);
+            if(!answerCheck.isValid){
+                await logAuditEvent({
+                    email: email,
+                    employeeType: user_exists.Employee_Type || 'Guest',
+                    action: 'VALIDATION_FAILED',
+                    route: req.originalUrl,
+                    details: 'Forgot password: incorrect security answer'
+                });
+                return res.json({success: false, message: "Incorrect security answer."});
+            }
+
             const forgot_password_exists = await database.findOne(forgot_password, {Email: email});
             if(!forgot_password_exists){
                 const count = await forgot_password.countDocuments();

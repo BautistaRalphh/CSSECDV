@@ -8,6 +8,7 @@ const employee = require('../models/employee_model.js');
 const payroll = require('../models/payroll_model.js');
 const { logAuditEvent } = require('../utils/audit-log');
 const { hashPassword, validatePassword } = require('../utils/password');
+const { validateEmployeeInput } = require('../utils/validation');
 
 const register_controller = {
     get_register: function(req, res){
@@ -16,9 +17,9 @@ const register_controller = {
     }, 
 
     post_register: async function(req, res){
-        const {firstName, lastName, address, contactNumber, email, password, employee_type} = req.body;
+        const {firstName, lastName, address, contactNumber, email, password, employee_type, securityQuestion, securityAnswer} = req.body;
 
-        if(!firstName || !lastName || !address || !contactNumber || !email || !employee_type){
+        if(!firstName || !lastName || !address || !contactNumber || !email || !employee_type || !securityQuestion || !securityAnswer){
             await logAuditEvent({
                 email: email || 'GUEST',
                 employeeType: req.session?.Employee_Type || 'Guest',
@@ -28,6 +29,19 @@ const register_controller = {
             });
 
             return res.status(400).json({message: "Missing required fields!"});
+        }
+
+        // Server-side input validation (range + length)
+        const inputErrors = validateEmployeeInput({firstName, lastName, address, contactNumber, email, password});
+        if(inputErrors.length > 0){
+            await logAuditEvent({
+                email: email || 'GUEST',
+                employeeType: req.session?.Employee_Type || 'Guest',
+                action: 'VALIDATION_FAILED',
+                route: req.originalUrl,
+                details: `Registration failed: ${inputErrors.join(', ')}`
+            });
+            return res.status(400).json({message: inputErrors.join(' ')});
         }
 
         const requesterType = req.session?.Employee_Type;
@@ -80,6 +94,7 @@ const register_controller = {
             }
             try{
                 const hashedPassword = await hashPassword(password);
+                const hashedSecurityAnswer = await hashPassword(securityAnswer.trim().toLowerCase());
                 const new_employee = new employee({
                     First_Name: firstName,
                     Last_Name: lastName,
@@ -89,7 +104,9 @@ const register_controller = {
                     Address: address,
                     Employee_Type: employee_type,
                     IsTimedIn: false,
-                    Password_Changed_At: new Date()
+                    Password_Changed_At: new Date(),
+                    Security_Question: securityQuestion,
+                    Security_Answer_Hash: hashedSecurityAnswer
                 });
                 await new_employee.save();
                 if(employee_type === "Employee" || employee_type === "Work From Home"){

@@ -17,10 +17,17 @@ document.addEventListener("DOMContentLoaded", function(){
         var password_input = document.getElementById("password").value;
         var address_input = document.getElementById("address").value;
         var employee_type_input = document.getElementById("employee-type").value;
+        var security_question_input = document.getElementById("security-question").value;
+        var security_answer_input = document.getElementById("security-answer").value;
 
         if (!first_name_input || !last_name_input || !password_input || !address_input) {
             showToast("Please fill in all fields.", "warning");
             return; 
+        }
+
+        if (!security_question_input || !security_answer_input) {
+            showToast("Please select a security question and provide an answer.", "warning");
+            return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,7 +61,9 @@ document.addEventListener("DOMContentLoaded", function(){
                     email: email_input,
                     password: password_input,
                     address: address_input,
-                    employee_type: employee_type_input
+                    employee_type: employee_type_input,
+                    securityQuestion: security_question_input,
+                    securityAnswer: security_answer_input
                 }),
             });
             const data = await response.json();

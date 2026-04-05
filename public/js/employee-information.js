@@ -43,12 +43,18 @@ async function saveEmployeeInfo(){
     const lastName = document.getElementById("edit-lastName").value;
     const address = document.getElementById("edit-address").value;
     const contactNumber = document.getElementById("edit-contactNumber").value;
+    const currentPassword = document.getElementById("edit-currentPassword").value;
     const password = document.getElementById("edit-password").value;
     const employeeTypeEl = document.getElementById("edit-employeeType");
     const employee_type = employeeTypeEl ? employeeTypeEl.value : null;
 
     if(!firstName || !lastName || !address || !contactNumber){
         showToast("Please fill in all required fields.", "warning");
+        return;
+    }
+
+    if(password && !currentPassword){
+        showToast("Please enter your current password to change the password.", "warning");
         return;
     }
 
@@ -70,7 +76,7 @@ async function saveEmployeeInfo(){
         const response = await fetch('/update_employee_info', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email, firstName, lastName, address, contactNumber, password, employee_type})
+            body: JSON.stringify({email, firstName, lastName, address, contactNumber, currentPassword, password, employee_type})
         });
         const data = await response.json();
         if(data.success){

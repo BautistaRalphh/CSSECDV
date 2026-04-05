@@ -82,6 +82,10 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 function togglePopup(){
+    // Reset the forgot password form each time it opens
+    document.getElementById("security-question-section").style.display = "none";
+    document.getElementById("forgot-error").textContent = "";
+    document.getElementById("forgot-password-form-id").reset();
     closeBtn();
     response_forms();
 }
@@ -90,43 +94,80 @@ function closeBtn(){
     document.getElementById("popup-1").classList.toggle("active");
 }
 
+var forgotPasswordListenerAdded = false;
 function response_forms(){
+    if(forgotPasswordListenerAdded) return;
+    forgotPasswordListenerAdded = true;
     var forgot_password_button_submit = document.getElementById("forgot-password-button-id");
     forgot_password_button_submit.addEventListener('click', forgot_password_function);
 }
+
+var forgotPasswordStep = 1; // 1 = enter email, 2 = answer security question
 
 async function forgot_password_function(event){
     event.preventDefault();
 
     var email_input = document.getElementById("for-pas-email").value;
+    var forgotError = document.getElementById("forgot-error");
 
-    var current_time = new Date();
-    var hours = current_time.getHours();
-    var minutes = current_time.getMinutes();
-    var time = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+    if(forgotPasswordStep === 1){
+        // Step 1: Fetch security question for this email
+        try{
+            const response = await fetch('/get_security_question', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email_input})
+            });
+            const data = await response.json();
+            if(data.success && data.securityQuestion){
+                document.getElementById("security-question-display").textContent = data.securityQuestion;
+                document.getElementById("security-question-section").style.display = "block";
+                document.getElementById("for-pas-email").disabled = true;
+                forgotPasswordStep = 2;
+                forgotError.textContent = "";
+            }else{
+                forgotError.textContent = data.message || "Email not found.";
+            }
+        }catch(error){
+            console.error(error);
+            forgotError.textContent = "An error occurred.";
+        }
+    }else if(forgotPasswordStep === 2){
+        // Step 2: Verify security answer and submit forgot password
+        var answer_input = document.getElementById("for-pas-answer").value;
+        if(!answer_input){
+            forgotError.textContent = "Please enter your security answer.";
+            return;
+        }
 
-    try{
-        const response = await fetch('/add_forgot_password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: email_input,
-                cTime: time
-            }),
-        });
-        const data = await response.json();
+        var current_time = new Date();
+        var hours = current_time.getHours();
+        var minutes = current_time.getMinutes();
+        var time = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+
+        try{
+            const response = await fetch('/add_forgot_password', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: email_input,
+                    cTime: time,
+                    securityAnswer: answer_input
+                })
+            });
+            const data = await response.json();
 
         if(data.success === true){
             alert(`Successfully sent forgot password notification.`);
+            forgotPasswordStep = 1;
             window.location.reload();
         }else if(data.success === false){
-            alert(`Email does not exist or there is already a notification.`);
-            document.getElementById("forgot-password-form-id").reset();
+            forgotError.textContent = data.message || "Verification failed.";
         }
     }catch(error){
         console.error(error);
+        forgotError.textContent = "An error occurred.";
+    }
     }
 }
 
