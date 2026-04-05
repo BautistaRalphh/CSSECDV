@@ -25,10 +25,14 @@
                     <option value="ALL" {{#if (eq selectedAction "ALL")}}selected{{/if}}>All</option>
                     <option value="LOGIN" {{#if (eq selectedAction "LOGIN")}}selected{{/if}}>Login</option>
                     <option value="LOGOUT" {{#if (eq selectedAction "LOGOUT")}}selected{{/if}}>Logout</option>
+                    <option value="LOGIN_FAILED" {{#if (eq selectedAction "LOGIN_FAILED")}}selected{{/if}}>Login Failed</option>
                     <option value="UNAUTHORIZED_ACCESS" {{#if (eq selectedAction "UNAUTHORIZED_ACCESS")}}selected{{/if}}>Unauthorized Access</option>
                     <option value="AUTHORIZATION_FAILED" {{#if (eq selectedAction "AUTHORIZATION_FAILED")}}selected{{/if}}>Authorization Failed</option>
+                    <option value="VALIDATION_FAILED" {{#if (eq selectedAction "VALIDATION_FAILED")}}selected{{/if}}>Validation Failed</option>
                     <option value="EMPLOYEE_EDIT" {{#if (eq selectedAction "EMPLOYEE_EDIT")}}selected{{/if}}>Employee Edit</option>
                     <option value="MANAGER_ASSIGNED" {{#if (eq selectedAction "MANAGER_ASSIGNED")}}selected{{/if}}>Manager Assigned</option>
+                    <option value="ACCOUNT_UNLOCKED" {{#if (eq selectedAction "ACCOUNT_UNLOCKED")}}selected{{/if}}>Account Unlocked</option>
+                    <option value="FORGOT_PASSWORD_REQUESTED" {{#if (eq selectedAction "FORGOT_PASSWORD_REQUESTED")}}selected{{/if}}>Forgot Password Requested</option>
                 </select>
             </div>
         </div>

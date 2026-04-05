@@ -50,6 +50,19 @@ const admin_empman_emprecs_controller = {
 
         const target = await employee.findOne({Email: email});
 
+        if(!target){
+            await logAuditEvent({
+                email: req.session.Email,
+                employeeType: req.session.Employee_Type,
+                action: 'VALIDATION_FAILED',
+                targetEmail: email,
+                route: req.originalUrl,
+                details: 'Display employee record failed: employee not found'
+            });
+
+            return res.status(404).send("Employee not found.");
+        }
+
         // Managers can only view employees assigned to them
         if(requesterType === "Manager" && target && target.Manager_Email !== req.session.Email){
             await logAuditEvent({

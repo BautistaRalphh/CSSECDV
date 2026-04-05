@@ -14,6 +14,13 @@ const forgot_password_controller = {
     get_security_question: async function(req, res){
         const { email } = req.body;
         if(!email){
+            await logAuditEvent({
+                email: 'GUEST',
+                employeeType: 'Guest',
+                action: 'VALIDATION_FAILED',
+                route: req.originalUrl,
+                details: 'Forgot password: missing email in security question lookup'
+            });
             return res.status(400).json({success: false, message: "Email is required."});
         }
         const user = await employee.findOne({Email: email});
@@ -69,15 +76,37 @@ const forgot_password_controller = {
                         Name: user_exists.First_Name + " " + user_exists.Last_Name
                     });
                     await new_forgot_password.save();
+                    
+                    await logAuditEvent({
+                        email: email,
+                        employeeType: user_exists.Employee_Type || 'Guest',
+                        action: 'FORGOT_PASSWORD_REQUESTED',
+                        route: req.originalUrl,
+                        details: 'Forgot password request created successfully'
+                    });
                     res.status(200).json({success: true, message: "Forgot Password Successful!"});
                 }catch(error){
                     console.error("Error in post_add_forgot_password:", error);
                     res.status(500).json({success: false, message: "Forgot Password Controller Error!"});
                 }
             }else{
+                await logAuditEvent({
+                    email: email,
+                    employeeType: user_exists.Employee_Type || 'Guest',
+                    action: 'VALIDATION_FAILED',
+                    route: req.originalUrl,
+                    details: 'Forgot password: duplicate forgot-password request already exists'
+                });
                 return res.json({success: false, message: "Forgot Password Already Exist."}); 
             }
         }else{
+            await logAuditEvent({
+                email: email || 'GUEST',
+                employeeType: 'Guest',
+                action: 'VALIDATION_FAILED',
+                route: req.originalUrl,
+                details: 'Forgot password: email does not exist'
+            });
             return res.json({success: false, message: "Email Does Not Exist."});
         }
     },
@@ -97,6 +126,13 @@ const forgot_password_controller = {
                 res.status(500).send("Internal Server Error!");
             }
         }else{
+            await logAuditEvent({
+                email: email || 'GUEST',
+                employeeType: req.session?.Employee_Type || 'Guest',
+                action: 'VALIDATION_FAILED',
+                route: req.originalUrl,
+                details: 'Forgot password delete failed: record not found'
+            });
             return res.status(404).json({success: false, message: "Forgot Password Record Not Found."});
         }
     }

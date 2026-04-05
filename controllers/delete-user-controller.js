@@ -54,6 +54,18 @@ const delete_user_controller = {
         });
         try {
             const emp_sum = await employee.findOne({ Email: email });
+            if(!emp_sum){
+                await logAuditEvent({
+                    email: req.session.Email,
+                    employeeType: req.session.Employee_Type,
+                    action: 'VALIDATION_FAILED',
+                    targetEmail: email,
+                    route: req.originalUrl,
+                    details: 'Display delete info failed: employee not found'
+                });
+
+                return res.status(404).json({success: false, message: "Employee not found."});
+            }
     
             res.render("delete-user", {emp_sum, emp_emails});
         } catch (error) {
