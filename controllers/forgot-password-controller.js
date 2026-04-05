@@ -21,6 +21,13 @@ const forgot_password_controller = {
                 route: req.originalUrl,
                 details: 'Forgot password: missing email in security question lookup'
             });
+            await logAuditEvent({
+                email: 'GUEST',
+                employeeType: 'Guest',
+                action: 'VALIDATION_FAILED',
+                route: req.originalUrl,
+                details: 'Forgot password: missing email in security question lookup'
+            });
             return res.status(400).json({success: false, message: "Email is required."});
         }
         const user = await employee.findOne({Email: email});

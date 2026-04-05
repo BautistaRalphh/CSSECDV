@@ -21,7 +21,7 @@ const audit_log_schema = new mongoose.Schema({
             'LOGIN_FAILED',
             'ACCOUNT_UNLOCKED',
             'VALIDATION_FAILED',
-            'FORGOT_PASSWORD_REQUESTED'
+            'FORGOT_PASSWORD_REQUESTED' 
         ],
         required: true
     },
